@@ -51,7 +51,6 @@ const Map: React.FC<MapProps> = ({ data }) => {
       }).addTo(map);
 
       // Fetch census data from backend when map initializes
-<<<<<<< HEAD
       fetchCensusData();
     }
   };
@@ -69,25 +68,6 @@ const Map: React.FC<MapProps> = ({ data }) => {
       console.error("Error fetching Census data:", error);
     }
   };
-=======
-      // fetchCensusData();
-    }
-  };
-
-  // const fetchCensusData = async () => {
-  //   try {
-  //     const res = await fetch("/api/census");
-  //     if (!res.ok) {
-  //       throw new Error("Network response was not ok");
-  //     }
-  //     const data = await res.json();
-  //     console.log(data)
-  //     processData(data);
-  //   } catch (error) {
-  //     console.error("Error fetching Census data:", error);
-  //   }
-  // };
->>>>>>> 64559b37cf80a7cac537ae5b45949ff05520f622
 
   // const processData = async (censusData: any) => {
   //   if (censusData && mapRef.current) {
