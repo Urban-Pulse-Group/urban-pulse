@@ -28,10 +28,21 @@ const Map: React.FC<MapProps> = ({ data }) => {
 
   const initializeMap = () => {
     if (mapContainerRef.current && !mapRef.current) {
-      const map = Leaflet.map(mapContainerRef.current).setView(
-        [34.0522, -118.2437],
-        13
+      const map = Leaflet.map(mapContainerRef.current);
+
+      // Geolocation API to get the user's current location
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          map.setView([latitude, longitude], 13);
+        },
+        (error) => {
+          console.error("Error getting user location:", error);
+          // Made a default view incase user's location cannot be found.
+          map.setView([34.0522, -118.2437], 13);
+        }
       );
+
       mapRef.current = map;
 
       Leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
