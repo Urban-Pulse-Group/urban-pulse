@@ -1,16 +1,8 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-
+import { useState } from "react";
+import Map from "./components/LeafletMap";
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <main>
-      
-    </main>
-  )
+  return <Map data={{}} />;
 }
 
-export default App
+export default App;
