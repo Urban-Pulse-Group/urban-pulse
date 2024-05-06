@@ -1,13 +1,12 @@
 import type { Knex } from "knex";
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({path: "../../.env"});
 
 const getConnectionString = (): string => {
-  const connectionString = process.env.PG_CONNECTION_STRING ?? "postgres://brandon@localhost:5432/civic_tech";
+  const connectionString = process.env.PG_CONNECTION_STRING;
   if (!connectionString) {
-    console.log(connectionString)
+    console.log(connectionString);
     throw new Error("PG connection string is not defined in environment");
-    
   }
   return connectionString;
 };
@@ -58,4 +57,4 @@ const config: { [key: string]: Knex.Config } = {
   },
 };
 
-module.exports = config;
+export default config;
