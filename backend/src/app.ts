@@ -1,5 +1,7 @@
 import express, { Request, Response, Application, NextFunction } from "express";
 import { Server } from "http";
+import dotenv from "dotenv";
+dotenv.config();
 import censusRouter from "./routes/censusRoutes";
 import cors from "cors";
 
