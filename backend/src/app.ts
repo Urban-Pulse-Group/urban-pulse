@@ -1,5 +1,8 @@
 import express, { Request, Response, Application, NextFunction } from "express";
 import { Server } from "http";
+import dotenv from "dotenv";
+dotenv.config();
+
 const app: Application = express();
 const PORT = process.env.PORT ?? 4040;
 
