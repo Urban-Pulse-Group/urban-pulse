@@ -26,6 +26,8 @@ const Map: React.FC<MapProps> = ({ data }) => {
     initializeMap();
   }, []);
 
+  
+
   const initializeMap = () => {
     if (mapContainerRef.current && !mapRef.current) {
       const map = Leaflet.map(mapContainerRef.current);
