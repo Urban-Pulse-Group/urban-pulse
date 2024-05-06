@@ -26,6 +26,8 @@ const Map: React.FC<MapProps> = ({ data }) => {
     initializeMap();
   }, []);
 
+  
+
   const initializeMap = () => {
     if (mapContainerRef.current && !mapRef.current) {
       const map = Leaflet.map(mapContainerRef.current);
@@ -51,23 +53,23 @@ const Map: React.FC<MapProps> = ({ data }) => {
       }).addTo(map);
 
       // Fetch census data from backend when map initializes
-      // fetchCensusData();
+      fetchCensusData();
     }
   };
 
-  // const fetchCensusData = async () => {
-  //   try {
-  //     const res = await fetch("/api/census");
-  //     if (!res.ok) {
-  //       throw new Error("Network response was not ok");
-  //     }
-  //     const data = await res.json();
-  //     console.log(data)
-  //     processData(data);
-  //   } catch (error) {
-  //     console.error("Error fetching Census data:", error);
-  //   }
-  // };
+  const fetchCensusData = async () => {
+    try {
+      const res = await fetch("http://localhost:4040/api/census");
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await res.json();
+      console.log(data)
+      // processData(data);
+    } catch (error) {
+      console.error("Error fetching Census data:", error);
+    }
+  };
 
   // const processData = async (censusData: any) => {
   //   if (censusData && mapRef.current) {
