@@ -1,11 +1,14 @@
 import { Response, Request } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { Jwt } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import db from "../db/db";
 import dotenv from "dotenv";
+import { JwtPayload } from "jsonwebtoken";
+import { generateAccessToken, generateRefreshToken } from "../utils/jwtHelpers";
 import { ProtectedRequest } from "../types/serverTypes";
 dotenv.config({ path: "../.env" });
+
 
 /**
  * @desc  Registers a new user
@@ -40,7 +43,6 @@ export const registerUser = asyncHandler(
     const newUser = await db.raw(
       `INSERT INTO users (name, username ,email, password)
       VALUES (?, ?, ?, ?)
-      RETURNING *
       `,
       [name, username, email, hashedPassword]
     );
@@ -48,6 +50,8 @@ export const registerUser = asyncHandler(
     if (newUser) {
       const user = newUser.rows[0];
       delete user.password;
+      await generateRefreshToken(res, user.id);
+
       res.status(201).json({
         ...user,
         token: generateAccessToken(user.id),
@@ -84,6 +88,8 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   if (userExists && (await bcrypt.compare(password, rows[0].password))) {
     const user = rows[0];
     delete user.password;
+    await generateRefreshToken(res, user.id);
+
     res.json({
       ...user,
       token: generateAccessToken(user.id),
@@ -99,31 +105,88 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
  * @route GET /api/users/getUser
  * @access Private
  */
-export const getUser = asyncHandler(async (req: ProtectedRequest, res: Response) => {
-  const { id, name, email } = await db.raw(
-    `SELECT * FROM users
-    WHERE id = ? `,
-    [req.user?.id]
-  );
-});
+export const getUser = asyncHandler(
+  async (req: ProtectedRequest, res: Response) => {
+    const { id, name, email } = await db.raw(
+      `SELECT * FROM users
+      WHERE id = ?
+      `,
+      [req.user?.id]
+    );
+  }
+);
 
 /**
- * @desc Generates a JWT Token using your JWT secret
- *@instructions Insert your secret into a .env file under the name JWT_ACCESS_SECRET
+ * @desc Refreshes access token
+ * using refresh token received
+ * from the client through http cookies
+ * @route GET /api/auth/refreshAccessToken
+ * @access Private
  */
-const generateAccessToken = (id: string): string => {
-  return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET!, {
-    expiresIn: "2h",
-  });
-};
+export const refreshAccessToken = asyncHandler(
+  async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken;
 
-/**
- * @desc Generates a JWT  refresh token using your JWT refresh  secret
- *@instructions Insert your secret into a .env file under the name JWT_REFRESH_SECRET
- */
-const generateRefreshToken = (res: Response, userId: string): string => {
-  const refreshToken = jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET!, {
-    expiresIn: '14d',
-  });
-  return refreshToken
-}
+    if (!refreshToken) {
+      res.status(401);
+      throw new Error("Refresh token missing");
+    }
+
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET!
+    ) as JwtPayload;
+
+    const { rows } = await db.raw(
+      `SELECT * FROM refresh_tokens
+       WHERE user_id = ?
+       AND token = ?
+       AND expires_at > NOW()
+       `,
+      [decoded.id, refreshToken]
+    );
+
+    if (rows.length === 0) {
+      res.status(401);
+      throw new Error("Invalid or expired refresh token");
+    }
+    const oldRefreshTokenId = rows[0].id;
+    await db.raw(
+      `DELETE FROM refresh_tokens
+       WHERE id = ?
+      `,
+      [oldRefreshTokenId]
+    )
+    const accessToken = generateAccessToken(decoded.id);
+    await generateRefreshToken(res, decoded.id)
+    res.json({ token: accessToken });
+  }
+);
+
+
+export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    res.json({ message: "Successfully logged out (refreshToken not found)" })
+    return;
+  }
+  
+  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as JwtPayload;
+  
+  await db.raw(
+    `DELETE FROM refresh_tokens
+     WHERE user_id = ?
+     AND token = ?
+     `,
+    [decoded.id, refreshToken]
+  )
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict"
+  })
+  res.json({message: "Successfully logged out"})
+    
+})
