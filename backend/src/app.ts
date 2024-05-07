@@ -2,6 +2,7 @@ import express, { Request, Response, Application, NextFunction } from "express";
 import { Server } from "http";
 import censusRouter from "./routes/censusRoutes";
 import authRouter from "./routes/authRoutes"
+import googleRouter from "./routes/googleCoords"
 import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
@@ -19,6 +20,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use(express.json());
 app.use("/api/census", censusRouter);
 app.use("/api/auth", authRouter)
+app.use("/api/coordinates", googleRouter)
 
 const server: Server = app.listen(4040, () =>
   console.log(`server is on port ${PORT}`)
