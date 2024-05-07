@@ -21,7 +21,7 @@ export const registerUser = asyncHandler(
 
     if (!name || !email || !password || !username) {
       res.status(400);
-      throw new Error("Please add all feilds");
+      throw new Error("Please add all fields");
     }
 
     const { rows } = await db.raw(
@@ -31,6 +31,7 @@ export const registerUser = asyncHandler(
       `,
       [email, username]
     );
+    
     const userExists = rows.length > 0;
 
     if (userExists) {
