@@ -9,7 +9,6 @@ import { generateAccessToken, generateRefreshToken } from "../utils/jwtHelpers";
 import { ProtectedRequest } from "../types/serverTypes";
 dotenv.config({ path: "../.env" });
 
-
 /**
  * @desc  Registers a new user
  * @route POST /api/auth/register
@@ -18,10 +17,9 @@ dotenv.config({ path: "../.env" });
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {
     const { name, username, email, password } = req.body;
-
     if (!name || !email || !password || !username) {
       res.status(400);
-      throw new Error("Please add all feilds");
+      throw new Error("Please add all fields");
     }
 
     const { rows } = await db.raw(
@@ -31,6 +29,7 @@ export const registerUser = asyncHandler(
       `,
       [email, username]
     );
+
     const userExists = rows.length > 0;
 
     if (userExists) {
@@ -51,10 +50,9 @@ export const registerUser = asyncHandler(
       const user = newUser.rows[0];
       delete user.password;
       await generateRefreshToken(res, user.id);
-
+      generateAccessToken(res, user.id);
       res.status(201).json({
         ...user,
-        token: generateAccessToken(user.id),
       });
     } else {
       res.status(400);
@@ -89,10 +87,9 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     const user = rows[0];
     delete user.password;
     await generateRefreshToken(res, user.id);
-
+    generateAccessToken(res, user.id);
     res.json({
       ...user,
-      token: generateAccessToken(user.id),
     });
   } else {
     res.status(400);
@@ -156,37 +153,38 @@ export const refreshAccessToken = asyncHandler(
        WHERE id = ?
       `,
       [oldRefreshTokenId]
-    )
-    const accessToken = generateAccessToken(decoded.id);
-    await generateRefreshToken(res, decoded.id)
-    res.json({ token: accessToken });
+    );
+    generateAccessToken(res, decoded.id);
+    await generateRefreshToken(res, decoded.id);
+    res.json({message: "successfulyl refreshed access token"})
   }
 );
-
 
 export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
-    res.json({ message: "Successfully logged out (refreshToken not found)" })
+    res.json({ message: "Successfully logged out (refreshToken not found)" });
     return;
   }
-  
-  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as JwtPayload;
-  
+
+  const decoded = jwt.verify(
+    refreshToken,
+    process.env.JWT_REFRESH_SECRET!
+  ) as JwtPayload;
+
   await db.raw(
     `DELETE FROM refresh_tokens
      WHERE user_id = ?
      AND token = ?
      `,
     [decoded.id, refreshToken]
-  )
+  );
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict"
-  })
-  res.json({message: "Successfully logged out"})
-    
-})
+    sameSite: "strict",
+  });
+  res.json({ message: "Successfully logged out" });
+});

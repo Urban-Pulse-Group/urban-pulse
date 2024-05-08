@@ -7,10 +7,20 @@ import { Response } from "express";
  * @desc Generates a JWT Token using your JWT secret
  *@instructions Insert your secret into a .env file under the name JWT_ACCESS_SECRET
  */
-export const generateAccessToken = (id: string): string => {
-  return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET!, {
+export const generateAccessToken = (res: Response, id: string) => {
+  
+  const accessToken =  jwt.sign({ id }, process.env.JWT_ACCESS_SECRET!, {
     expiresIn: "2h",
   });
+  
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
+  })
+
+
 };
 
 /**
