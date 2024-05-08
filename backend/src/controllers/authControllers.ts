@@ -14,11 +14,14 @@ dotenv.config({ path: "../.env" });
  * @route POST /api/auth/register
  * @access Public
  */
+
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {
     const { name, username, email, password } = req.body;
+
     if (!name || !email || !password || !username) {
       res.status(400);
+      console.log("Please add all fields");
       throw new Error("Please add all fields");
     }
 
@@ -39,20 +42,24 @@ export const registerUser = asyncHandler(
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const newUser = await db.raw(
-      `INSERT INTO users (name, username ,email, password)
+
+    const { rows: insertedRows } = await db.raw(
+      `INSERT INTO users (name, username, email, password)
       VALUES (?, ?, ?, ?)
+      RETURNING id, name, username, email, roles, created_at
       `,
       [name, username, email, hashedPassword]
     );
 
+    const newUser = insertedRows[0];
+
     if (newUser) {
-      const user = newUser.rows[0];
-      delete user.password;
-      await generateRefreshToken(res, user.id);
-      generateAccessToken(res, user.id);
+      await generateRefreshToken(res, newUser.id);
+      delete newUser.password;
+      const token = generateAccessToken(newUser.id);
       res.status(201).json({
-        ...user,
+        ...newUser,
+        token,
       });
     } else {
       res.status(400);
@@ -87,9 +94,10 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     const user = rows[0];
     delete user.password;
     await generateRefreshToken(res, user.id);
-    generateAccessToken(res, user.id);
+    const token = generateAccessToken(user.id);
     res.json({
       ...user,
+      token,
     });
   } else {
     res.status(400);
@@ -104,13 +112,9 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
  */
 export const getUser = asyncHandler(
   async (req: ProtectedRequest, res: Response) => {
-    const { id, name, email } = await db.raw(
-      `SELECT * FROM users
-      WHERE id = ?
-      `,
-      [req.user?.id]
-    );
+    res.json(req.user)
   }
+
 );
 
 /**
@@ -154,12 +158,16 @@ export const refreshAccessToken = asyncHandler(
       `,
       [oldRefreshTokenId]
     );
-    generateAccessToken(res, decoded.id);
+    const token = generateAccessToken(decoded.id);
     await generateRefreshToken(res, decoded.id);
-    res.json({message: "successfulyl refreshed access token"})
+    res.json({ token });
   }
 );
-
+/***
+ * @desc logs out a user by clearing cookies and removing the users refresh token from the database
+ * @route GET /api/auth/logout
+ * @access Private
+ */
 export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
 
