@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-
+import { JwtPayload } from "jsonwebtoken";
 import db from "../db/db";
-import { Response } from "express";
+import { Response, Request } from "express";
 
 /**
  * @desc Generates a JWT Token using your JWT secret
@@ -39,3 +39,44 @@ export const generateRefreshToken = async (res: Response, id: string) => {
     maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
   });
 };
+
+/**
+ * @desc Refreshes access token
+ * using refresh token received
+ * from the client through http cookies
+ * @route GET /api/auth/refreshAccessToken
+ * @access Private
+ */
+export const refreshAccessToken = 
+  async (refreshToken: string, res: Response) => {
+
+
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET!
+    ) as JwtPayload;
+
+    const { rows } = await db.raw(
+      `SELECT * FROM refresh_tokens
+       WHERE user_id = ?
+       AND token = ?
+       AND expires_at > NOW()
+       `,
+      [decoded.id, refreshToken]
+    );
+
+    if (rows.length === 0) {
+      res.status(401);
+      throw new Error("Invalid or expired refresh token");
+    }
+    const oldRefreshTokenId = rows[0].id;
+    await db.raw(
+      `DELETE FROM refresh_tokens
+       WHERE id = ?
+      `,
+      [oldRefreshTokenId]
+    );
+    const token = generateAccessToken(decoded.id);
+    await generateRefreshToken(res, decoded.id);
+    return token
+  }
