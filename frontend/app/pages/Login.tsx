@@ -1,27 +1,83 @@
-import React from "react";
-import { Link } from "react-router-dom";
+// Login.tsx
+import React, { ChangeEvent, FormEvent, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { Label } from "../components/label";
+import { useAuth } from "../state/authStore";
 
 export default function Login() {
+  const { login } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    emailOrUsername: "",
+    password: "",
+  });
+  const navigate = useNavigate();
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:4040/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        setErrorMessage("Invalid Credentials");
+        return;
+      }
+
+      const data = await res.json();
+      console.log("Successfully logged in");
+
+      login(data.token); // Set the token and authentication state
+      setFormData({
+        emailOrUsername: "",
+        password: "",
+      });
+      navigate("/");
+    } catch (error) {
+      setErrorMessage("Invalid Credentials");
+      console.error("Login error:", error);
+    }
+  };
+
   return (
-    <div className="w-full  h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="w-screen flex items-center justify-center h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
-        <div className="mx-auto grid w-[350px] gap-6">
+        <form className="mx-auto grid w-[350px] gap-6" onSubmit={handleSubmit}>
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
             <p className="text-balance text-muted-foreground">
               Enter your credentials below to sign in
             </p>
           </div>
+          {errorMessage && (
+            <div className="text-red-600 text-center">{errorMessage}</div>
+          )}
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email"></Label>
               <Input
                 id="email"
-                type="email"
-                placeholder="Username or Email"
+                type="text"
+                name="emailOrUsername"
+                value={formData.emailOrUsername}
+                onChange={(e) => handleChange(e)}
+                placeholder="Email or Username"
                 required
               />
             </div>
@@ -34,12 +90,21 @@ export default function Login() {
                   Forgot your password?
                 </Link>
               </div>
-              <Input id="password" type="password" placeholder="Password" required />
+              <Input
+                id="password"
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={(e) => handleChange(e)}
+                placeholder="Password"
+                required
+              />
             </div>
-            <Button className="w-full bg-red-600 hover:bg-red-700">
+            <Button
+              type="submit"
+              className="w-full bg-red-600 hover:bg-red-700">
               Login
             </Button>
-          
           </div>
           <div className="mt-4 text-center text-sm">
             Don't have an account?{" "}
@@ -47,13 +112,13 @@ export default function Login() {
               Sign up
             </Link>
           </div>
-        </div>
+        </form>
       </div>
-      <div className="hidden  lg:h-screen   bg-muted lg:flex items-center">
+      <div className="hidden lg:h-screen bg-muted lg:flex items-center">
         <img
           src="/logo.svg"
           alt="Image"
-          className=" w-[50vw] object-cover dark:brightness-[0.2] dark:grayscale"
+          className="w-[50vw] object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
     </div>

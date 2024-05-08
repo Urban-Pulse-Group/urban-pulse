@@ -1,9 +1,9 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { Label } from "../components/label";
-
+import { useAuth } from "../state/authStore";
 interface FormData {
   name: string;
   username: string;
@@ -13,6 +13,8 @@ interface FormData {
 }
 
 export default function Signup() {
+  const {login} = useAuth()
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     username: "",
@@ -20,8 +22,8 @@ export default function Signup() {
     confirmPassword: "",
     email: "",
   });
+  const navigate = useNavigate()
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -36,7 +38,7 @@ export default function Signup() {
     console.log("Submitting form data:", formData);
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setErrorMessage("Passwords dont match")
       return;
     }
 
@@ -64,8 +66,16 @@ export default function Signup() {
       } else {
         const data = await res.json();
         console.log("Signup successful:", data);
+        login(data.token)
+        navigate("/")
         setErrorMessage(null);
-        // Redirect or perform further actions here
+        setFormData({
+          name: "",
+          username: "",
+          password: "",
+          confirmPassword: "",
+          email: "",
+        });
       }
     } catch (err) {
       console.error("Fetch error:", err);
@@ -73,10 +83,8 @@ export default function Signup() {
     }
   };
 
-  console.log(formData);
-
   return (
-    <div className="w-full h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="w-screen justify-center flex items-center h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
         <form onSubmit={handleSubmit} className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
@@ -116,6 +124,7 @@ export default function Signup() {
               <Input
                 id="username"
                 type="text"
+                autoComplete="off"
                 value={formData.username}
                 onChange={handleChange}
                 placeholder="Username"
@@ -127,6 +136,7 @@ export default function Signup() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="off"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Password"
@@ -138,6 +148,7 @@ export default function Signup() {
               <Input
                 id="confirmPassword"
                 type="password"
+               
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="Confirm Password"

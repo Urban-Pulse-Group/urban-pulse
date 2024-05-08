@@ -17,19 +17,21 @@ export const protect = asyncHandler(
     ) {
       try {
         token = req.headers.authorization.split(" ")[1];
-
+  
         const decoded = jwt.verify(
           token,
-          process.env.JWT_SECRET!
+          process.env.JWT_ACCESS_SECRET!
         ) as DecodedToken;
-        req.user = await db.raw(
+        console.log("id:", decoded.id)
+        const {rows} = await db.raw(
           `
             SELECT * FROM users
             WHERE id = ?
-            EXCEPT SELECT password 
           `,
           [decoded.id]
         );
+        req.user = rows[0]
+       
         next();
       } catch (error) {
         console.error(error);
@@ -38,6 +40,7 @@ export const protect = asyncHandler(
       }
     }
     if (!token) {
+      console.log("no token")
       res.status(401);
       throw new Error("Not authorized, no token");
     }

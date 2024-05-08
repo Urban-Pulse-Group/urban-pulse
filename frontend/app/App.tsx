@@ -1,22 +1,34 @@
-import { useState } from "react";
 import Map from "./components/LeafletMap";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
 import "./globals.css";
 import "./styles.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import NavBar from "./components/NavBar";
+import { useAuth } from "./state/authStore";
 import HomeLayout from "./layouts/HomeLayout";
 import AboutUs from "./pages/AboutUs";
 export default function App() {
+  const { getUser, setUser, setIsLoggedIn, isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getUser();
+      if (user) {
+        setUser(user);
+        setIsLoggedIn(true);
+      }
+    };
+    fetchUser();
+  }, [isLoggedIn]);
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomeLayout />}>
           <Route index element={<Home />} />
-          <Route path="/map" element={<Map  />} />
+          <Route path="/map" element={<Map />} />
         </Route>
 
         <Route path="/login" element={<Login />} />
