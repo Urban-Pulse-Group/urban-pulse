@@ -14,16 +14,8 @@ export default function App() {
   return (
     <Router>
       <Routes>
-<<<<<<< HEAD
         <Route path="/" element={<Home></Home>} />
         <Route path="/map" element={<Map />} />
-=======
-        <Route path="/" element={<HomeLayout />}>
-          <Route index element={<Home />} />
-          <Route path="/map" element={<Map data={{}} />} />
-        </Route>
-
->>>>>>> main
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>
