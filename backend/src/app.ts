@@ -2,7 +2,6 @@ import express, { Request, Response, Application, NextFunction } from "express";
 import { Server } from "http";
 import censusRouter from "./routes/censusRoutes";
 import authRouter from "./routes/authRoutes";
-import googleRouter from "./routes/googleCoords";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middleware/errorMiddleware";
@@ -17,11 +16,6 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use(cookieParser());
 app.use(errorHandler);
-
-app.use("/api/census", censusRouter);
-
-app.use("/api/coordinates", googleRouter);
-
 app.use("/api/census", censusRouter);
 
 const PORT: number | string = process.env.PORT ?? 4040;

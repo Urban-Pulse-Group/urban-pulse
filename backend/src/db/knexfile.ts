@@ -1,6 +1,7 @@
 import type { Knex } from "knex";
 import dotenv from "dotenv";
 dotenv.config({path: "../../.env"});
+dotenv.config();
 
 const getConnectionString = (): string => {
   const connectionString = process.env.PG_CONNECTION_STRING;

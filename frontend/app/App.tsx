@@ -12,7 +12,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home></Home>} />
-        <Route path="/map" element={<Map data={{}} />} />
+        <Route path="/map" element={<Map />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>

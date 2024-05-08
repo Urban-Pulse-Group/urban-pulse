@@ -9,7 +9,14 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "types": ["leaflet"],
+    "types": [
+      "react",
+      "react-dom",
+      "leaflet",
+      "leaflet.markercluster",
+      "@types/react-leaflet",
+      "leaflet-control-geocoder"
+    ],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -25,6 +32,11 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "app/components/button.tsx", "app/components/input.tsx", "app/components/label.tsx"],
+  "include": [
+    "src",
+    "app/components/button.tsx",
+    "app/components/input.tsx",
+    "app/components/label.tsx"
+  ],
   "references": [{ "path": "tsconfig.node.json" }]
 }
