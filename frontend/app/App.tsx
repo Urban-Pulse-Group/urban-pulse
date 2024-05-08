@@ -1,4 +1,4 @@
-import Map from "./components/LeafletMap";
+import Map from "./pages/Map"
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import React, { useEffect } from "react";
 import "./globals.css";
