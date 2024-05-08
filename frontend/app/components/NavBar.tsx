@@ -9,7 +9,7 @@ interface NavbarItem {
 
 export default function NavBar() {
   return (
-    <nav className="flex  p-4 items-center  justify-between">
+    <nav className="flex  p-1 items-center  justify-between">
       <div className="w-[220px]">
         <img src="/logo.svg" alt="logo" />
       </div>
@@ -17,7 +17,7 @@ export default function NavBar() {
       <ul className="flex w-fit px-14 items-center h-fit gap-10">
         {items.map((item) => {
           return (
-            <li className=" text-lg h-fit">
+            <li key={Math.floor(Math.random() * 23443243)} className=" text-lg h-fit">
               <Link to={item.link}>{item.name}</Link>
             </li>
           );
