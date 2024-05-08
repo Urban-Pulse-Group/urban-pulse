@@ -26,9 +26,12 @@ export const useAuth = create<AuthState>((set, get) => ({
         "http://localhost:4040/api/auth/getUser",
         get().token
       );
-      const user = await res.json();
-      set({ user, isLoggedIn: true });
-      return user;
+      const data = await res.json();
+      set({ user: data.user, isLoggedIn: true });
+      if ("token" in data) {
+        localStorage.setItem("token", data.token);
+      }
+      return data.user;
     } catch (error) {
       console.error("User not authenticated:", error);
       set({ user: null, isLoggedIn: false });
