@@ -7,10 +7,12 @@ import fuzzysearch from "fuzzysearch";
 
 interface GeocoderControlProps {
   onLocationSearch: (location: string) => void; // Callback function to handle location search
+  onCensusDataReceived: (data: any) => void;
 }
 
 const GeocoderControlComponent: React.FC<GeocoderControlProps> = ({
   onLocationSearch,
+  onCensusDataReceived,
 }) => {
   const map = useMap();
 
@@ -78,12 +80,15 @@ const GeocoderControlComponent: React.FC<GeocoderControlProps> = ({
               throw new Error("Failed to fetch data from backend");
             }
             const censusData = await censusResponse.json();
+            onCensusDataReceived(censusData);
             console.log(censusData);
           } catch (error) {
             console.error("Error fetching Census data:", error);
+            
           }
         } else {
           console.log("Location not found in API data");
+          
         }
       } catch (error) {
         console.error("Error fetching data from Census API:", error);
@@ -93,7 +98,7 @@ const GeocoderControlComponent: React.FC<GeocoderControlProps> = ({
     return () => {
       map.removeControl(geocoder);
     };
-  }, [map, onLocationSearch]);
+  }, [map, onLocationSearch, onCensusDataReceived]);
 
   return null;
 };

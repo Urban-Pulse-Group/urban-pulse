@@ -12,16 +12,16 @@ IGNORE TOP CODE FOR NOW
 
 */
 
-// function formatCurrency(amount: number) {
-//   return new Intl.NumberFormat("en-US", {
-//     style: "currency",
-//     currency: "USD",
-//   }).format(amount);
-// }
+function formatCurrency(amount: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
+}
 
-// function formatNumber(number: number) {
-//   return number.toLocaleString("en-US");
-// }
+function formatNumber(number: number) {
+  return number.toLocaleString("en-US");
+}
 
 //   const processData = async (censusData: any) => {
 //     if (censusData && mapRef.current) {
@@ -77,6 +77,7 @@ const LeafletMap: React.FC = () => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
   );
+  const [censusData, setCensusData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -100,20 +101,49 @@ const LeafletMap: React.FC = () => {
 
   console.log(searchedLocation);
 
+  const handleCensusDataReceived = (data: any) => {
+    setCensusData(data);
+  };
+
   return loading ? (
-    <div>Loading...</div>
+    <div>Loading Map...</div>
   ) : (
-    <MapContainer
-      center={userLocation ?? [51.505, -0.09]}
-      zoom={13}
-      style={{ height: "100vh" }}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      <GeocoderControlComponent onLocationSearch={setSearchedLocation} />
-    </MapContainer>
+    <div className="flex">
+      {/* Sidebar */}
+      <div className="w-1/4 bg-gray-200 p-4 flex flex-col">
+        {/* Census Information */}
+        <h2 className="text-xl font-bold mb-4">Census Information</h2>
+        {censusData && (
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col">
+              <p>Median Income:</p>
+              <p>{formatCurrency(parseFloat(censusData.data[1][0]))}</p>
+            </div>
+            <div>
+              <p>Population:</p>
+              <p>{formatNumber(parseFloat(censusData.data[1][1]))}</p>
+            </div>
+          </div>
+        )}
+      </div>
+      {/* Map Container */}
+      <div className="w-3/4">
+        <MapContainer
+          center={userLocation ?? [51.505, -0.09]}
+          zoom={13}
+          style={{ height: "100vh" }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <GeocoderControlComponent
+            onLocationSearch={setSearchedLocation}
+            onCensusDataReceived={handleCensusDataReceived}
+          />
+        </MapContainer>
+      </div>
+    </div>
   );
 };
 

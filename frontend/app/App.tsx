@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Map from "./components/LeafletMap";
+import Map from "./pages/Map";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import React from "react";
 import "./globals.css";
@@ -14,8 +14,11 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home></Home>} />
-        <Route path="/map" element={<Map />} />
+        <Route path="/" element={<HomeLayout />}>
+          <Route index element={<Home />} />
+          <Route path="/map" element={<Map />} />
+        </Route>
+
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>
