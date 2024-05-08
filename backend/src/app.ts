@@ -11,8 +11,8 @@ dotenv.config();
 
 const app: Application = express();
 const corsOptions = {
-  origin: 'http://localhost:5173', // Adjust to match your frontend's URL
-  credentials: true, // Enable cookies
+  origin: 'http://localhost:5173', 
+  credentials: true, 
 };
 app.use(cors(corsOptions));
 app.use(express.json());
