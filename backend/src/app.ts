@@ -1,23 +1,30 @@
 import express, { Request, Response, Application, NextFunction } from "express";
 import { Server } from "http";
+import censusRouter from "./routes/censusRoutes";
+import authRouter from "./routes/authRoutes";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { errorHandler } from "./middleware/errorMiddleware";
+import { logRequests } from "./middleware/loggingMiddleware";
 import dotenv from "dotenv";
 dotenv.config();
-import censusRouter from "./routes/censusRoutes";
-import cors from "cors";
 
 const app: Application = express();
-
-app.use(cors());
-const PORT = process.env.PORT ?? 4040;
-
-app.get("/", (req: Request, res: Response) => {
-  console.log("hi");
-});
-
+const corsOptions = {
+  origin: 'http://localhost:5173', 
+  credentials: true, 
+};
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use("/api/census", censusRouter);
+app.use(logRequests);
+app.use(errorHandler);
+app.use(cookieParser());
 
-app.use((req: Request, res: Response, next: NextFunction) => {});
+app.use("/api/census", censusRouter);
+app.use("/api/auth", authRouter);
+
+
+const PORT: number | string = process.env.PORT ?? 4040;
 const server: Server = app.listen(4040, () =>
   console.log(`server is on port ${PORT}`)
 );

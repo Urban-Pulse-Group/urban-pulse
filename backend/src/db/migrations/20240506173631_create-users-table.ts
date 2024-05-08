@@ -7,7 +7,8 @@ export async function up(knex: Knex): Promise<void> {
     CREATE TABLE users(
         id  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(100) NOT NULL,
-        email VARCHAR(255) NOT NULL,
+        username VARCHAR(100) NOT NULL UNIQUE,
+        email VARCHAR(255) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
         roles VARCHAR(50)[] DEFAULT NULL
