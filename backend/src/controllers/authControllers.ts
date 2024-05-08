@@ -14,11 +14,14 @@ dotenv.config({ path: "../.env" });
  * @route POST /api/auth/register
  * @access Public
  */
+
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {
     const { name, username, email, password } = req.body;
+
     if (!name || !email || !password || !username) {
       res.status(400);
+      console.log("Please add all fields");
       throw new Error("Please add all fields");
     }
 
@@ -39,20 +42,24 @@ export const registerUser = asyncHandler(
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const newUser = await db.raw(
-      `INSERT INTO users (name, username ,email, password)
+
+    const { rows: insertedRows } = await db.raw(
+      `INSERT INTO users (name, username, email, password)
       VALUES (?, ?, ?, ?)
+      RETURNING id, name, username, email, roles, created_at
       `,
       [name, username, email, hashedPassword]
     );
 
+    const newUser = insertedRows[0];
+
     if (newUser) {
-      const user = newUser.rows[0];
-      delete user.password;
-      await generateRefreshToken(res, user.id);
-      generateAccessToken(res, user.id);
+      await generateRefreshToken(res, newUser.id);
+      delete newUser.password;
+      const token = generateAccessToken(newUser.id);
       res.status(201).json({
-        ...user,
+        ...newUser,
+        token,
       });
     } else {
       res.status(400);
@@ -87,9 +94,10 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     const user = rows[0];
     delete user.password;
     await generateRefreshToken(res, user.id);
-    generateAccessToken(res, user.id);
+    const token = generateAccessToken(user.id);
     res.json({
       ...user,
+      token,
     });
   } else {
     res.status(400);
@@ -104,62 +112,19 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
  */
 export const getUser = asyncHandler(
   async (req: ProtectedRequest, res: Response) => {
-    const { id, name, email } = await db.raw(
-      `SELECT * FROM users
-      WHERE id = ?
-      `,
-      [req.user?.id]
-    );
+    if ("token" in req) {
+      res.json({ user: req.user, token: req.token });
+    } else {
+      res.json({user: req.user})
+    }
   }
 );
 
-/**
- * @desc Refreshes access token
- * using refresh token received
- * from the client through http cookies
- * @route GET /api/auth/refreshAccessToken
+/***
+ * @desc logs out a user by clearing cookies and removing the users refresh token from the database
+ * @route GET /api/auth/logout
  * @access Private
  */
-export const refreshAccessToken = asyncHandler(
-  async (req: Request, res: Response) => {
-    const refreshToken = req.cookies.refreshToken;
-
-    if (!refreshToken) {
-      res.status(401);
-      throw new Error("Refresh token missing");
-    }
-
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.JWT_REFRESH_SECRET!
-    ) as JwtPayload;
-
-    const { rows } = await db.raw(
-      `SELECT * FROM refresh_tokens
-       WHERE user_id = ?
-       AND token = ?
-       AND expires_at > NOW()
-       `,
-      [decoded.id, refreshToken]
-    );
-
-    if (rows.length === 0) {
-      res.status(401);
-      throw new Error("Invalid or expired refresh token");
-    }
-    const oldRefreshTokenId = rows[0].id;
-    await db.raw(
-      `DELETE FROM refresh_tokens
-       WHERE id = ?
-      `,
-      [oldRefreshTokenId]
-    );
-    generateAccessToken(res, decoded.id);
-    await generateRefreshToken(res, decoded.id);
-    res.json({message: "successfulyl refreshed access token"})
-  }
-);
-
 export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
 
