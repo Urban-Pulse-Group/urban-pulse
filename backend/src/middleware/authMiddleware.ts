@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import db from "../db/db";
 import { NextFunction, Request, Response } from "express";
-import { User, UserData } from "../types/userTypes";
+import { User} from "../types/userTypes";
 import { refreshAccessToken } from "../utils/jwtHelpers";
 import { ProtectedRequest } from "../types/serverTypes";
 interface DecodedToken {

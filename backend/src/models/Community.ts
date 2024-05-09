@@ -1,8 +1,8 @@
 import db from "../db/db";
 
 export interface Community {
-  id?: number;
-  userId: number;
+  id?: string;
+  userId: string;
   title: string;
   description: string;
   category: string;
@@ -34,7 +34,7 @@ export class Communities {
    `);
     return rows;
   }
-  static async find(id: string) {
+  static async findById(id: string) {
     const { rows } = await db.raw(
       `
       SELECT * FROM communities

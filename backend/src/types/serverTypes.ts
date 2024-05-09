@@ -1,8 +1,8 @@
 import { Request } from "express";
-import { UserData } from "./userTypes";
+import { User } from "./userTypes";
 
 
 export interface ProtectedRequest extends Request {
-  user?: UserData;
+  user?: User;
   token?: string
 }
