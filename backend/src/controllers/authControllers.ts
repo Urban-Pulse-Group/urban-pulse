@@ -14,7 +14,6 @@ dotenv.config({ path: "../.env" });
  * @route POST /api/auth/register
  * @access Public
  */
-
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {
     const { name, username, email, password } = req.body;
