@@ -3,7 +3,7 @@ import type { Knex } from "knex";
 export async function up(knex: Knex): Promise<void> {
   await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
   return knex.schema.raw(`
-    CREATE TABLE community (
+    CREATE TABLE communities (
       id  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id  UUID REFERENCES users(id) ON DELETE CASCADE,
         title TEXT NOT NULL,
