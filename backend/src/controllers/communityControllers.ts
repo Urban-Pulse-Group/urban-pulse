@@ -37,11 +37,11 @@ export const createCommunity = asyncHandler(async (req, res) => {
 
   const { rows } = await db.raw(
     `
-    INSERT INTO community ( user_id, title, description, category)
+    INSERT INTO communities ( user_id, title, description, category)
     VALUES (?, ?, ?, ?)
     RETURNING *
   `,
-    [title, description, category]
+    [userId, title, description, category]
   );
 
   res.status(201).json({
@@ -52,7 +52,7 @@ export const createCommunity = asyncHandler(async (req, res) => {
 
 export const getAllCommunities = asyncHandler(async (req, res) => {
   const { rows } = await db.raw(`
-     SELECT * FROM community     
+     SELECT * FROM communities     
    `);
   res.json({
     data: rows,
@@ -63,7 +63,7 @@ export const getACommunity = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const [rows] = await db.raw(
     `
-    SELECT * FROM community
+    SELECT * FROM communities
     WHERE id = ?
   `,
     [id]
@@ -78,7 +78,7 @@ export const deleteACommunity = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const [rows] = await db.raw(
     `
-  DELETE FROM community
+  DELETE FROM communities
   WHERE id = ?
   `,
     [id]
