@@ -1,9 +1,16 @@
 import { Router } from "express";
 import { protect } from "../middleware/authMiddleware";
-import { createCommunity } from "../controllers/communityControllers";
+import {
+  createCommunity,
+  deleteACommunity,
+  getACommunity,
+  getAllCommunities,
+} from "../controllers/communityControllers";
 
 const router = Router();
 
-router.get("/createCommunity", protect, createCommunity);
-
+router.post("/createCommunity", protect, createCommunity);
+router.get("/getCommunities", protect, getAllCommunities);
+router.get("/getCommunity/:id", protect, getACommunity);
+router.delete("/deleteCommunity/:id", protect, deleteACommunity);
 export default router;
