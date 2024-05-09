@@ -1,6 +1,9 @@
-import express, { Router } from "express";
+import { Router } from "express";
 import { protect } from "../middleware/authMiddleware";
+import { createCommunity } from "../controllers/communityControllers";
 
-const router: Router = express.Router();
+const router = Router();
+
+router.get("/createCommunity", protect, createCommunity);
 
 export default router;
