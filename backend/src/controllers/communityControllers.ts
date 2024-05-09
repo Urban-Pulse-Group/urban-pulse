@@ -35,7 +35,7 @@ export const createCommunity = asyncHandler(async (req, res) => {
     throw new Error("Title, description, and category are required");
   }
 
-  const [newCommunity] = await db.raw(
+  const { rows } = await db.raw(
     `
     INSERT INTO community (title, description, category)
     VALUES (?, ?, ?)
@@ -47,6 +47,6 @@ export const createCommunity = asyncHandler(async (req, res) => {
   res.status(201).json({
     success: true,
     message: "Community created successfully",
-    data: newCommunity,
+    data: rows[0],
   });
 });
