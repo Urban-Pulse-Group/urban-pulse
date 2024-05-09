@@ -2,8 +2,7 @@ import asyncHandler from "express-async-handler";
 import db from "../db/db";
 import { ProtectedRequest } from "../types/serverTypes";
 import { Request, Response } from "express";
-
-
+import { Communities } from "../models/Community";
 
 /**
  * @desc creates a community
@@ -17,22 +16,16 @@ export const createCommunity = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("User Id, Title, description, and category are required");
   }
-
-  const { rows } = await db.raw(
-    `
-    INSERT INTO communities ( user_id, title, description, category)
-    VALUES (?, ?, ?, ?)
-    RETURNING *
-  `,
-    [userId, title, description, category]
-  );
-
+  const createdCommunity = await Communities.create(req.body);
+  if (!createCommunity) {
+    res.status(500);
+    throw new Error("Unable to create community");
+  }
   res.status(201).json({
     message: "Community created successfully",
-    data: rows[0],
+    data: createdCommunity,
   });
 });
-
 
 /**
  * @desc gets all Communities
@@ -40,15 +33,8 @@ export const createCommunity = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const getAllCommunities = asyncHandler(async (req, res) => {
-  const { rows } = await db.raw(`
-     SELECT * FROM communities     
-   `);
-  res.json({
-    data: rows,
-  });
+  res.json({ data: await Communities.findAll() });
 });
-
-
 
 /**
  * @desc gets a single community using id retrieved frrom url params
@@ -57,42 +43,28 @@ export const getAllCommunities = asyncHandler(async (req, res) => {
  */
 export const getCommunity = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { rows } = await db.raw(
-    `
-    SELECT * FROM communities
-    WHERE id = ?
-  `,
-    [id]
-  );
-
-  const communityExists = rows.length > 0;
-  if (!communityExists) {
+  const community = await Communities.find(id);
+  if (!community) {
     res.status(404);
-    throw new Error("Unable to find row");
+    throw new Error("Community not found");
   }
-  res.json({
-    data: rows[0],
-  });
+  res.json({ data: community });
 });
-
 
 /**
  * @desc gets a single community using id retrieved frrom url params
- * @route  DELETE /api/community/:id
+ * @route   /api/community/:id
  * @access Private
  */
 export const deleteCommunity = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { rows } = await db.raw(
-    `
-  DELETE FROM communities
-  WHERE id = ?
-  `,
-    [id]
-  );
-
+  const deletedCommunity = await Communities.delete(id);
+  if (!deleteCommunity) {
+    res.status(404);
+    throw new Error("Unable to delete: Community not found");
+  }
   res.json({
     message: "Deleted successfully!",
-    data: rows,
+    data: deleteCommunity,
   });
 });

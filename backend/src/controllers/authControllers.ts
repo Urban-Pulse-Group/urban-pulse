@@ -114,7 +114,7 @@ export const getUser = asyncHandler(
     if ("token" in req) {
       res.json({ user: req.user, token: req.token });
     } else {
-      res.json({user: req.user})
+      res.json({ user: req.user });
     }
   }
 );
