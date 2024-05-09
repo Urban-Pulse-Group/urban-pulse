@@ -18,12 +18,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(logRequests);
-app.use(errorHandler);
+
 app.use(cookieParser());
 app.use("/api/community", communityRouter);
 app.use("/api/census", censusRouter);
 app.use("/api/auth", authRouter);
 
+app.use(errorHandler);
 const PORT: number | string = process.env.PORT ?? 4040;
 const server: Server = app.listen(4040, () =>
   console.log(`server is on port ${PORT}`)

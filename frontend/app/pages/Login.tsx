@@ -102,7 +102,7 @@ export default function Login() {
             </div>
             <Button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-700">
+              className="w-full ">
               Login
             </Button>
           </div>
