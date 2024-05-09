@@ -2,31 +2,14 @@ import asyncHandler from "express-async-handler";
 import db from "../db/db";
 import { ProtectedRequest } from "../types/serverTypes";
 import { Request, Response } from "express";
-import knex from "knex";
-// export const createCommunity = asyncHandler(
-//   async (req: Request, res: Response) => {
-//     const { user_id, title, description, category } = req.body;
 
-//     const { rows } = await knex.raw(`
-//     INSERT INTO community (user_id ,title, description, category)
-//     VALUES (?, ?, ?, ?)
-//     RETURN *
 
-//     `);
-//     // const newCommunity = await db("community")
-//     //   .insert({
-//     //     title,
-//     //     description,
-//     //     category,
-//     //   })
-//     // .returning("*");
-//     res.status(201).json({
-//       success: true,
-//       data: newCommunity[0],
-//     });
-//   }
-// );
 
+/**
+ * @desc creates a community
+ * @route  GET /api/community
+ * @access Private
+ */
 export const createCommunity = asyncHandler(async (req, res) => {
   const { userId, title, description, category } = req.body;
 
@@ -50,6 +33,12 @@ export const createCommunity = asyncHandler(async (req, res) => {
   });
 });
 
+
+/**
+ * @desc gets all Communities
+ * @route  GET /api/community
+ * @access Private
+ */
 export const getAllCommunities = asyncHandler(async (req, res) => {
   const { rows } = await db.raw(`
      SELECT * FROM communities     
@@ -59,32 +48,50 @@ export const getAllCommunities = asyncHandler(async (req, res) => {
   });
 });
 
-export const getACommunity = asyncHandler(async (req, res) => {
+
+
+/**
+ * @desc gets a single community using id retrieved frrom url params
+ * @route  GET /api/community/:id
+ * @access Private
+ */
+export const getCommunity = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const [rows] = await db.raw(
+  const { rows } = await db.raw(
     `
     SELECT * FROM communities
     WHERE id = ?
   `,
     [id]
   );
+
+  const communityExists = rows.length > 0;
+  if (!communityExists) {
+    res.status(404);
+    throw new Error("Unable to find row");
+  }
   res.json({
-    success: true,
-    data: rows,
+    data: rows[0],
   });
 });
 
-export const deleteACommunity = asyncHandler(async (req, res) => {
+
+/**
+ * @desc gets a single community using id retrieved frrom url params
+ * @route  DELETE /api/community/:id
+ * @access Private
+ */
+export const deleteCommunity = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const [rows] = await db.raw(
+  const { rows } = await db.raw(
     `
   DELETE FROM communities
   WHERE id = ?
   `,
     [id]
   );
+
   res.json({
-    success: true,
     message: "Deleted successfully!",
     data: rows,
   });
