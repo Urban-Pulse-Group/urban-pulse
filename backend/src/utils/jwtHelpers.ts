@@ -1,23 +1,26 @@
-import jwt from "jsonwebtoken";
-import { JwtPayload } from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { Response } from "express";
 import db from "../db/db";
-import { Response, Request } from "express";
+import { RefreshTokens } from "../models/RefreshTokens";
 
 /**
- * @desc Generates a JWT Token using your JWT secret
- *@instructions Insert your secret into a .env file under the name JWT_ACCESS_SECRET
+ * Generates a JWT Access Token using the secret.
+ * @param id - User ID
+ * @returns Access Token
  */
-export const generateAccessToken = ( id: string) => {
+export const generateAccessToken = (id: string): string => {
   return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET!, {
     expiresIn: "2h",
   });
 };
 
 /**
- * @desc Generates a JWT  refresh token using your JWT refresh  secret
- *@instructions Insert your secret into a .env file under the name JWT_REFRESH_SECRET
+ * Generates a JWT Refresh Token, stores it in the database, and sets it as a cookie.
+ * @param res - Express Response object
+ * @param id - User ID
+ * @returns Refresh Token
  */
-export const generateRefreshToken = async (res: Response, id: string) => {
+export const generateRefreshToken = async (res: Response, id: string): Promise<string> => {
   const refreshToken = jwt.sign({ id }, process.env.JWT_REFRESH_SECRET!, {
     expiresIn: "14d",
   });
@@ -25,58 +28,44 @@ export const generateRefreshToken = async (res: Response, id: string) => {
   const expiresAt: Date = new Date();
   expiresAt.setDate(expiresAt.getDate() + 14);
 
-  await db.raw(
-    `INSERT INTO refresh_tokens (user_id, token, expires_at)
-     VALUES (?, ?, ?)
-     `,
-    [id, refreshToken, expiresAt]
-  );
+  // Store the refresh token in the database
+  await RefreshTokens.create(id, refreshToken);
 
+  // Set the refresh token as a cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
   });
+
+  return refreshToken;
 };
 
 /**
- * @desc Refreshes access token
- * using refresh token received
- * from the client through http cookies
- * @route GET /api/auth/refreshAccessToken
- * @access Private
+ * Refreshes Access Token using a Refresh Token.
+ * @param refreshToken - Refresh Token from the client
+ * @param res - Express Response object
+ * @returns New Access Token
  */
-export const refreshAccessToken = 
-  async (refreshToken: string, res: Response) => {
+export const refreshAccessToken = async (refreshToken: string, res: Response): Promise<string> => {
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as JwtPayload;
 
-
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.JWT_REFRESH_SECRET!
-    ) as JwtPayload;
-
-    const { rows } = await db.raw(
-      `SELECT * FROM refresh_tokens
-       WHERE user_id = ?
-       AND token = ?
-       AND expires_at > NOW()
-       `,
-      [decoded.id, refreshToken]
-    );
-
-    if (rows.length === 0) {
+    const existingToken = await RefreshTokens.find(decoded.id, refreshToken);
+    if (!existingToken) {
       res.status(401);
       throw new Error("Invalid or expired refresh token");
     }
-    const oldRefreshTokenId = rows[0].id;
-    await db.raw(
-      `DELETE FROM refresh_tokens
-       WHERE id = ?
-      `,
-      [oldRefreshTokenId]
-    );
-    const token = generateAccessToken(decoded.id);
+
+
+    await RefreshTokens.delete(decoded.id, refreshToken);
+    const newAccessToken = generateAccessToken(decoded.id);
     await generateRefreshToken(res, decoded.id);
-    return token
+
+    return newAccessToken;
+  } catch (error) {
+    res.status(401);
+    throw new Error("Invalid or expired refresh token");
   }
+};
