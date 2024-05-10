@@ -34,6 +34,7 @@ export const registerUser = asyncHandler(
     }
 
     const hashedPassword = await Users.hashPassword(password);
+    console.log(hashedPassword,"hashed shit")
     const newUser = await Users.create({
       name,
       username,
@@ -71,6 +72,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const user = await Users.findByEmailOrUsername(emailOrUsername);
+  console.log(user)
   if (user && (await Users.verifyPassword(password, user.password as string))) {
     await generateRefreshToken(res, user.id!);
     const token = generateAccessToken(user.id!);
@@ -118,11 +120,10 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     process.env.JWT_REFRESH_SECRET!
   ) as JwtPayload;
   await RefreshTokens.delete(decoded.id, refreshToken);
-
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure:false ,
+    sameSite: "lax",
   });
   res.json({ message: "Successfully logged out" });
 });

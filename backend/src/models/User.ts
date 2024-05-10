@@ -74,7 +74,6 @@ export class Users {
    */
   static async create(user: Omit<User, 'id'>): Promise<User | null> {
     const { name, username, email, password } = user;
-    const hashedPassword = await Users.hashPassword(password!);
 
     const { rows } = await db.raw(
       `
@@ -82,7 +81,7 @@ export class Users {
       VALUES (?, ?, ?, ?)
       RETURNING id, name, username, email, roles, created_at
       `,
-      [name, username, email, hashedPassword]
+      [name, username, email, password]
     );
 
     return rows.length > 0 ? (rows[0] as User) : null;
@@ -95,7 +94,9 @@ export class Users {
    * @returns True if passwords match, otherwise false
    */
   static async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
-    return await bcrypt.compare(password, hashedPassword);
+    const correct = await bcrypt.compare(password, hashedPassword);
+    console.log("correct:", correct)
+    return  correct
   }
 
   /**
@@ -104,7 +105,21 @@ export class Users {
    * @returns Hashed password
    */
   static async hashPassword(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt);
+
+    return await bcrypt.hash(password, 10);
   }
 }
+
+async function testHashing(password="111") {
+
+  const hash = await bcrypt.hash(password, 10);
+  console.log('Newly hashed password:', hash);
+
+  // Now compare the original input password against the new hash
+  const isMatch = await bcrypt.compare(password, '$2a$10$43.T2gxBjgjhF1I1fLDo8umc/humyTeQJZ8MpZw.CsTIfGJUKya/W');
+  console.log('Does the original password match the new hash?', isMatch);
+  console.log("hash")
+}
+
+const originalPassword = '111'; // Replace with the actual password used
+testHashing(originalPassword);

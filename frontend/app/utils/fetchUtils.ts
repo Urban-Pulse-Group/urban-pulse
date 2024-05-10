@@ -15,6 +15,7 @@ export const authenticatedFetch = async (
     const fetchOptions: RequestInit = {
       ...options,
       method: options.method ?? "GET", 
+      credentials: "include",
       headers: {
         ...defaultHeaders,
         ...options.headers, 

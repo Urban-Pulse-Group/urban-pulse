@@ -15,11 +15,12 @@ const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true,
 };
+app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(logRequests);
 
-app.use(cookieParser());
+
 app.use("/api/community", communityRouter);
 app.use("/api/census", censusRouter);
 app.use("/api/auth", authRouter);
