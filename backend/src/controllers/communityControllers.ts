@@ -17,10 +17,6 @@ export const createCommunity = asyncHandler(async (req, res) => {
     throw new Error("User Id, Title, description, and category are required");
   }
   const createdCommunity = await Communities.create(req.body);
-  if (!createCommunity) {
-    res.status(500);
-    throw new Error("Unable to create community");
-  }
   res.status(201).json({
     message: "Community created successfully",
     data: createdCommunity,
