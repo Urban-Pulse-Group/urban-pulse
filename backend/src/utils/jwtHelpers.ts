@@ -20,22 +20,23 @@ export const generateAccessToken = (id: string): string => {
  * @param id - User ID
  * @returns Refresh Token
  */
-export const generateRefreshToken = async (res: Response, id: string): Promise<string> => {
+export const generateRefreshToken = async (
+  res: Response,
+  id: string
+): Promise<string> => {
   const refreshToken = jwt.sign({ id }, process.env.JWT_REFRESH_SECRET!, {
     expiresIn: "14d",
   });
-
+  console.log("generating:", refreshToken);
   const expiresAt: Date = new Date();
   expiresAt.setDate(expiresAt.getDate() + 14);
 
-  // Store the refresh token in the database
   await RefreshTokens.create(id, refreshToken);
 
-  // Set the refresh token as a cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: false,
+    sameSite: "lax",
     maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
   });
 
@@ -48,9 +49,15 @@ export const generateRefreshToken = async (res: Response, id: string): Promise<s
  * @param res - Express Response object
  * @returns New Access Token
  */
-export const refreshAccessToken = async (refreshToken: string, res: Response): Promise<string> => {
+export const refreshAccessToken = async (
+  refreshToken: string,
+  res: Response
+): Promise<string> => {
   try {
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as JwtPayload;
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET!
+    ) as JwtPayload;
 
     const existingToken = await RefreshTokens.find(decoded.id, refreshToken);
     if (!existingToken) {
@@ -58,11 +65,8 @@ export const refreshAccessToken = async (refreshToken: string, res: Response): P
       throw new Error("Invalid or expired refresh token");
     }
 
-
     await RefreshTokens.delete(decoded.id, refreshToken);
     const newAccessToken = generateAccessToken(decoded.id);
-    await generateRefreshToken(res, decoded.id);
-
     return newAccessToken;
   } catch (error) {
     res.status(401);

@@ -44,7 +44,6 @@ describe("Auth API", () => {
       const res = await request(app).post("/api/auth/register").send(newUser);
 
       expect(res.status).toBe(201);
-   
       expect(res.body).toHaveProperty("token");
       expect(res.body.user).toEqual(expectedUser);
 

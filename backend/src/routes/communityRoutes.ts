@@ -9,7 +9,7 @@ import {
 
 const router: Router = Router();
 
-router.post("/", protect, createCommunity);
+router.post("/",  createCommunity);
 router.get("/", protect, getAllCommunities);
 router.get("/:id", protect, getCommunity);
 router.delete("/:id", protect, deleteCommunity);
