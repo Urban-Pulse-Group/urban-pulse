@@ -44,6 +44,7 @@ export const registerUser = asyncHandler(
     if (newUser) {
       await generateRefreshToken(res, newUser.id!);
       const token = generateAccessToken(newUser.id!);
+      console.log("token:", token)
       delete newUser.password;
       res.status(201).json({
         ...newUser,
