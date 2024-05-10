@@ -1,16 +1,19 @@
-import { Response, Request } from "express";
-import jwt, { Jwt } from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import db from "../db/db";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import dotenv from "dotenv";
-import { JwtPayload } from "jsonwebtoken";
+import { Users, User } from "../models/User";
+
 import { generateAccessToken, generateRefreshToken } from "../utils/jwtHelpers";
 import { ProtectedRequest } from "../types/serverTypes";
+import { RefreshTokens } from "../models/RefreshTokens";
+
+
+
 dotenv.config({ path: "../.env" });
 
 /**
- * @desc  Registers a new user
+ * @desc Registers a new user
  * @route POST /api/auth/register
  * @access Public
  */
@@ -24,38 +27,25 @@ export const registerUser = asyncHandler(
       throw new Error("Please add all fields");
     }
 
-    const { rows } = await db.raw(
-      `SELECT * FROM users
-      WHERE email = ?
-      OR username = ?
-      `,
-      [email, username]
-    );
-
-    const userExists = rows.length > 0;
-
+    const userExists = await Users.exists(email, username);
     if (userExists) {
       res.status(400);
       throw new Error("User already exists");
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const { rows: insertedRows } = await db.raw(
-      `INSERT INTO users (name, username, email, password)
-      VALUES (?, ?, ?, ?)
-      RETURNING id, name, username, email, roles, created_at
-      `,
-      [name, username, email, hashedPassword]
-    );
-
-    const newUser = insertedRows[0];
+    const hashedPassword = await Users.hashPassword(password);
+    const newUser = await Users.create({
+      name,
+      username,
+      email,
+      password: hashedPassword,
+    });
 
     if (newUser) {
-      await generateRefreshToken(res, newUser.id);
+      await generateRefreshToken(res, newUser.id!);
+      const token = generateAccessToken(newUser.id!);
+      console.log("token:", token)
       delete newUser.password;
-      const token = generateAccessToken(newUser.id);
       res.status(201).json({
         ...newUser,
         token,
@@ -77,23 +67,14 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
   if (!emailOrUsername || !password) {
     res.status(400);
-    throw new Error("Please add all feilds");
+    throw new Error("Please add all fields");
   }
 
-  const { rows } = await db.raw(
-    `SELECT * FROM users
-     WHERE email = ?
-     OR username = ?
-     `,
-    [emailOrUsername, emailOrUsername]
-  );
-
-  const userExists = rows.length > 0;
-  if (userExists && (await bcrypt.compare(password, rows[0].password))) {
-    const user = rows[0];
-    delete user.password;
-    await generateRefreshToken(res, user.id);
-    const token = generateAccessToken(user.id);
+  const user = await Users.findByEmailOrUsername(emailOrUsername);
+  if (user && (await Users.verifyPassword(password, user.password as string))) {
+    await generateRefreshToken(res, user.id!);
+    const token = generateAccessToken(user.id!);
+    delete user.password; 
     res.json({
       ...user,
       token,
@@ -120,7 +101,7 @@ export const getUser = asyncHandler(
 );
 
 /***
- * @desc logs out a user by clearing cookies and removing the users refresh token from the database
+ * @desc Logs out a user by clearing cookies and removing the user's refresh token from the database
  * @route GET /api/auth/logout
  * @access Private
  */
@@ -136,14 +117,7 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     refreshToken,
     process.env.JWT_REFRESH_SECRET!
   ) as JwtPayload;
-
-  await db.raw(
-    `DELETE FROM refresh_tokens
-     WHERE user_id = ?
-     AND token = ?
-     `,
-    [decoded.id, refreshToken]
-  );
+  await RefreshTokens.delete(decoded.id, refreshToken);
 
   res.clearCookie("refreshToken", {
     httpOnly: true,

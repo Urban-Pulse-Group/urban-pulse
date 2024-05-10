@@ -1,8 +1,8 @@
 import db from "../db/db";
 
 export interface Community {
-  id?: number;
-  userId: number;
+  id?: string;
+  userId: string;
   title: string;
   description: string;
   category: string;
@@ -11,7 +11,11 @@ export interface Community {
 }
 
 export class Communities {
-  static async create(vals: Community) {
+  /**
+   * @desc Creates a Community with the values passed in
+   * @returns Created community if it was successfully created, null if it was not
+   */
+  static async create(vals: Community): Promise<Community | null> {
     const { userId, title, description, category } = vals;
     const { rows } = await db.raw(
       `
@@ -28,13 +32,19 @@ export class Communities {
     }
     return rows[0]
   }
+
   static async findAll() {
     const { rows } = await db.raw(`
      SELECT * FROM communities     
    `);
     return rows;
   }
-  static async find(id: string) {
+
+  /**
+   * @desc Finds Community with an ID that is equal to the ID passed in
+   * @returns Community with the given ID if it was found, null if it was not
+   */
+  static async findById(id: string): Promise<Community| null> {
     const { rows } = await db.raw(
       `
       SELECT * FROM communities
@@ -49,7 +59,11 @@ export class Communities {
     return rows[0];
   }
 
-  static async delete(id: string) {
+ /**
+  * @desc Deletes community with the given ID
+   * @returns Deleted community if it was found, null if it was not
+   */
+  static async delete(id: string): Promise<Community | null> {
     const { rows } = await db.raw(
       `
     DELETE FROM communities

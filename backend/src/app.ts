@@ -10,7 +10,7 @@ import dotenv from "dotenv";
 import communityRouter from "./routes/communityRoutes";
 dotenv.config();
 
-const app: Application = express();
+export const app: Application = express();
 const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true,

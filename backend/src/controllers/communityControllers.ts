@@ -17,10 +17,6 @@ export const createCommunity = asyncHandler(async (req, res) => {
     throw new Error("User Id, Title, description, and category are required");
   }
   const createdCommunity = await Communities.create(req.body);
-  if (!createCommunity) {
-    res.status(500);
-    throw new Error("Unable to create community");
-  }
   res.status(201).json({
     message: "Community created successfully",
     data: createdCommunity,
@@ -43,7 +39,7 @@ export const getAllCommunities = asyncHandler(async (req, res) => {
  */
 export const getCommunity = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const community = await Communities.find(id);
+  const community = await Communities.findById(id);
   if (!community) {
     res.status(404);
     throw new Error("Community not found");
@@ -59,7 +55,7 @@ export const getCommunity = asyncHandler(async (req, res) => {
 export const deleteCommunity = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const deletedCommunity = await Communities.delete(id);
-  if (!deleteCommunity) {
+  if (!deletedCommunity) {
     res.status(404);
     throw new Error("Unable to delete: Community not found");
   }

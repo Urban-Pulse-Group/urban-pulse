@@ -5,12 +5,7 @@ import "leaflet-control-geocoder/dist/Control.Geocoder.css";
 import "leaflet/dist/leaflet.css";
 import "leaflet-control-geocoder";
 import GeocoderControlComponent from "./GeocoderControl";
-
-/*
-
-IGNORE TOP CODE FOR NOW 
-
-*/
+import { PropagateLoader } from "react-spinners";
 
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat("en-US", {
@@ -22,55 +17,6 @@ function formatCurrency(amount: number) {
 function formatNumber(number: number) {
   return number.toLocaleString("en-US");
 }
-
-//   const processData = async (censusData: any) => {
-//     if (censusData && mapRef.current) {
-//       for (const dataRow of censusData) {
-//         if (Array.isArray(dataRow) && dataRow.length >= 6) {
-//           const [
-//             medianIncome,
-//             population,
-//             totalHousingUnits,
-//             state,
-//             county,
-//             tract,
-//           ] = dataRow;
-//           // console.log("state:", state, "medianIncome:", medianIncome, "population:", population, "tract:", tract, "county:", county);
-//           const coordinates = await getCoordinatesFromGoogleMaps(
-//             state,
-//             county,
-//             tract,
-//             "La Jolla, California"
-//           );
-//           // console.log("coordinates:", coordinates, "state:", state, "county:", county, "tract:", tract)
-//           if (coordinates) {
-//             const [latitude, longitude] = coordinates;
-
-//             const popupContent = `
-//               <span class="text-black">Median Income:  ${formatCurrency(
-//                 parseFloat(medianIncome)
-//               )} </span> <br/>
-//               <span class="text-black">Population: ${formatNumber(
-//                 parseFloat(population)
-//               )} </span> <br/>
-//               <span class="text-black">Housing Units: ${formatNumber(
-//                 parseFloat(totalHousingUnits)
-//               )} </span>
-//             `;
-//             const marker = Leaflet.marker([latitude, longitude]).addTo(
-//               mapRef.current!
-//             );
-//             marker.bindPopup(popupContent);
-//           } else {
-//             console.error("Error getting coordinates for:", dataRow);
-//           }
-//         } else {
-//           console.error("Invalid data row format:", dataRow);
-//         }
-//       }
-//       mapRef.current.invalidateSize();
-//     }
-//   };
 
 const LeafletMap: React.FC = () => {
   const [searchedLocation, setSearchedLocation] = useState("");
@@ -106,14 +52,25 @@ const LeafletMap: React.FC = () => {
   };
 
   return loading ? (
-    <div>Loading Map...</div>
+    <div className="flex justify-center items-center h-screen flex-col ">
+      <p className=" text-red-600 font-bold flex justify-center flex-col ml-7  mb-2">
+        LOADING MAP...
+      </p>
+      <PropagateLoader
+        color="hsla(360, 67%, 53%, 1)"
+        cssOverride={{}}
+        loading
+        size={15}
+        speedMultiplier={1}
+      />
+    </div>
   ) : (
     <div className="flex">
       {/* Sidebar */}
       <div className="w-1/4 bg-gray-200 p-4 flex flex-col">
         {/* Census Information */}
         <h2 className="text-xl font-bold mb-4">Census Information</h2>
-        {censusData && (
+        {censusData ? (
           <div className="flex flex-col gap-5">
             <div className="flex flex-col">
               <p>Median Income:</p>
@@ -124,6 +81,8 @@ const LeafletMap: React.FC = () => {
               <p>{formatNumber(parseFloat(censusData.data[1][1]))}</p>
             </div>
           </div>
+        ) : (
+          "Enter a city to view its census data."
         )}
       </div>
       {/* Map Container */}
