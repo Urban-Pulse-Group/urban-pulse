@@ -9,7 +9,11 @@ export interface Post {
 }
 
 export class Posts {
-  static async create(vals: Post) {
+    
+  /**
+   *@desc Creates post with the values passed in
+   */
+  static async create(vals: Post): Promise<Post> {
     const { userId, title, content, community_id } = vals;
     const { rows } = await db.raw(
       `
@@ -20,24 +24,28 @@ export class Posts {
       [userId, title, content, community_id]
     );
 
-    const postExists = rows.length > 0;
-    if (!postExists) {
-      return null;
-    }
     return rows[0];
   }
+    
+  /**
+   * @desc Gets all Posts found in the database
+   */
   static async findAll() {
     const { rows } = await db.raw(`
          SELECT * FROM posts    
-       `);
+        `);
+      
     return rows;
   }
 
-  static async find(id: string) {
+  /**
+   * @desc Gets the Post that correlates to the ID passed in
+   * @returns The Post with the given ID if found, null if not
+   */
+  static async find(id: string): Promise<Post | null> {
     const { rows } = await db.raw(
-      `
-          SELECT * FROM posts
-          WHERE id = ?
+      `SELECT * FROM posts
+       WHERE id = ?
         `,
       [id]
     );
@@ -48,7 +56,12 @@ export class Posts {
     return rows[0];
   }
 
-  static async delete(id: string) {
+    /**
+     * 
+     * @desc Deletes Post with the given ID
+     * @returns Deleted Post if successfully deleted
+     */
+  static async delete(id: string): Promise<Post> {
     const { rows } = await db.raw(
       `
         DELETE FROM posts
@@ -57,10 +70,7 @@ export class Posts {
         `,
       [id]
     );
-    const postExists = rows.length > 0;
-    if (!postExists) {
-      return null;
-    }
+
     return rows[0];
   }
 }

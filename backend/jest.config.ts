@@ -10,6 +10,9 @@ const config: Config.InitialOptions = {
       diagnostics: false,
     },
   },
+  moduleNameMapper: {
+    '^../src/db/db$': '<rootDir>/src/db/__mocks__/db',
+  },
 };
 
 export default config;

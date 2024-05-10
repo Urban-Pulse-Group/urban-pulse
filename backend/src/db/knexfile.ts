@@ -24,6 +24,23 @@ const config: { [key: string]: Knex.Config } = {
       tableName: "knex_migrations",
     },
   },
+  test: {
+    client: 'pg',
+    connection: process.env.PG_TEST_CONNECTION_STRING,
+    pool: {
+      min: 2,
+      max: 10,
+    },
+    migrations: {
+      directory: './migrations',
+      tableName: 'knex_migrations',
+    },
+    seeds: {
+      directory: './seeds',
+    },
+  },
+
+
 
   staging: {
     client: "postgresql",
