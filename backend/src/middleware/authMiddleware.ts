@@ -1,71 +1,80 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
-import db from "../db/db";
-import { NextFunction, Request, Response } from "express";
-import { User} from "../types/userTypes";
+import { NextFunction, Response } from "express";
+import { Users } from "../models/User";
+import { RefreshTokens } from "../models/RefreshTokens";
 import { refreshAccessToken } from "../utils/jwtHelpers";
 import { ProtectedRequest } from "../types/serverTypes";
+
 interface DecodedToken {
   id: string;
 }
+
 export const protect = asyncHandler(
   async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
-    let token;
+    let accessToken: string | null = null;
 
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      try {
-        token = req.headers.authorization.split(" ")[1];
-
-        const decoded = jwt.verify(
-          token,
-          process.env.JWT_ACCESS_SECRET!
-        ) as DecodedToken;
-        console.log("id:", decoded.id);
-        const { rows } = await db.raw(
-          `
-            SELECT * FROM users
-            WHERE id = ?
-          `,
-          [decoded.id]
-        );
-        req.user = rows[0];
-
-        next();
-      } catch (error) {
-        console.error(error);
-        res.status(401);
-        throw new Error("Not authorized");
-      }
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+      accessToken = req.headers.authorization.split(" ")[1];
     }
-    if (!refreshToken) {
-      console.log("no token");
-      res.status(401);
-      throw new Error("Not authorized, no token");
-    }
-    const newToken= await refreshAccessToken(refreshToken, res);
-    req.token = newToken
-    try {
+
+    if (accessToken) {
       const decoded = jwt.verify(
-        newToken,
+        accessToken,
         process.env.JWT_ACCESS_SECRET!
       ) as DecodedToken;
-      const { rows } = await db.raw(
-        `
-          SELECT * FROM users
-          WHERE id = ?
-        `,
-        [decoded.id]
-      );
-      req.user = rows[0];
+
+      const user = await Users.findById(decoded.id);
+      if (!user) {
+        res.status(401);
+        throw new Error("Not authorized, user not found");
+      }
+
+      req.user = user;
+      req.token = accessToken;
       next();
-    } catch (error) {
-      console.error(error);
-      res.status(401);
-      throw new Error("Not authorized");
+      return;
     }
+
+    if (refreshToken) {
+      const newAccessToken = await refreshAccessToken(refreshToken, res);
+
+      const decoded = jwt.verify(
+        newAccessToken,
+        process.env.JWT_ACCESS_SECRET!
+      ) as DecodedToken;
+
+      const user = await Users.findById(decoded.id);
+      if (!user) {
+        res.status(401);
+        throw new Error("Not authorized, user not found");
+      }
+
+
+      await RefreshTokens.delete(decoded.id, refreshToken);
+      const newRefreshToken = jwt.sign(
+        { id: decoded.id },
+        process.env.JWT_REFRESH_SECRET!,
+        { expiresIn: "14d" }
+      );
+
+      await RefreshTokens.create(decoded.id, newRefreshToken);
+
+      res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 14 * 24 * 60 * 60 * 1000 // 14 days
+      });
+
+      req.user = user;
+      req.token = newAccessToken;
+      next();
+
+    }
+
+    res.status(401);
+    throw new Error("Not authorized, no tokens provided");
   }
 );
