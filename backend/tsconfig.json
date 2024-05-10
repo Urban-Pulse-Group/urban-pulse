@@ -112,7 +112,6 @@
     "./tests",
     "jest.config.ts",
     "tests",
-    "src/**/*",
-    "tests/**/*"
+  
   ]
 }

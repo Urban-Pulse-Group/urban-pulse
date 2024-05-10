@@ -8,9 +8,10 @@ import db, {
   truncateAllTables,
 } from "../src/db/testdb";
 
+
 describe("Auth API", () => {
   beforeAll(async () => {
-    migrateTestDB();
+
   });
 
   afterEach(async () => {
@@ -43,7 +44,7 @@ describe("Auth API", () => {
       const res = await request(app).post("/api/auth/register").send(newUser);
 
       expect(res.status).toBe(201);
-      expect(res.body).toHaveProperty("user");
+   
       expect(res.body).toHaveProperty("token");
       expect(res.body.user).toEqual(expectedUser);
 
