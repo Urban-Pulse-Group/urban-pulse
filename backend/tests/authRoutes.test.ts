@@ -1,9 +1,8 @@
 import request from "supertest";
 import jwt from "jsonwebtoken";
-
+import { v4 as uuidv4 } from "uuid";
 import { app } from "../src/app";
-import {
-  db,
+import db, {
   migrateTestDB,
   rollbackTestDB,
   truncateAllTables,
@@ -11,7 +10,7 @@ import {
 
 describe("Auth API", () => {
   beforeAll(async () => {
-    await migrateTestDB();
+    migrateTestDB();
   });
 
   afterEach(async () => {
@@ -20,6 +19,7 @@ describe("Auth API", () => {
 
   afterAll(async () => {
     await rollbackTestDB();
+    await db.destroy();
   });
 
   describe("POST /api/auth/register", () => {
@@ -31,29 +31,27 @@ describe("Auth API", () => {
         password: "AppleBetterThanWindowsAndWindowsSucksDontUseWindows",
       };
 
+      const expectedUser = {
+        id: expect.any(String),
+        name: "Steve Jobs",
+        username: "SteveJobs",
+        email: "steveJobs@apple.com",
+        roles: expect.any(Array),
+        created_at: expect.any(String),
+      };
+
       const res = await request(app).post("/api/auth/register").send(newUser);
 
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty("user");
       expect(res.body).toHaveProperty("token");
-      expect(res.body.user).toEqual({
-        id: expect.any(String),
-        name: "Steve Jobs",
-        username: "SteveJobs",
-        email: "steveJobs@apple.com",
-        roles: expect.any(Array),
-        created_at: expect.any(String),
-      });
+      expect(res.body.user).toEqual(expectedUser);
 
       const users = await db("users").select("*");
       expect(users.length).toBe(1);
       expect(users[0]).toMatchObject({
-        id: expect.any(String),
-        name: "Steve Jobs",
-        username: "SteveJobs",
-        email: "steveJobs@apple.com",
-        roles: expect.any(Array),
-        created_at: expect.any(String),
+        ...expectedUser,
+        password: newUser.password,
       });
     });
 
@@ -66,19 +64,23 @@ describe("Auth API", () => {
 
       const res = await request(app).post("/api/auth/register").send(newUser);
       expect(res.status).toBe(400);
-      expect(res.body.message).toMatch(/Please add all fields/i);
     });
   });
 
   describe("POST /api/auth/login", () => {
-    let testUserId: string;
+    const testUser = {
+      name: "Isiah Hickerson",
+      username: "Zae",
+      email: "Zae@gmail.com",
+      password: "michealJackon",
+    };
 
     beforeEach(async () => {
       await db("users").insert({
-        name: "Isiah Hickerson",
-        username: "Zae",
-        email: "Zae@gmail.com",
-        password: "michealJackon",
+        name: testUser.name,
+        username: testUser.username,
+        email: testUser.email,
+        password: testUser.password,
       });
     });
 
@@ -88,20 +90,21 @@ describe("Auth API", () => {
         password: "michealJackon",
       };
 
+      const expectedUser = {
+        id: expect.any(String),
+        name: "Isiah Hickerson",
+        username: "Zae",
+        email: "Zae@gmail.com",
+        roles: expect.any(Array),
+        created_at: expect.any(String),
+      };
+
       const res = await request(app).post("/api/auth/login").send(credentials);
 
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("user");
       expect(res.body).toHaveProperty("token");
-      expect(res.body.user).toEqual({
-        id: expect.any(String),
-        name: "Isiah Hickerson",
-        username: "Zae",
-        email: "Zae@gmail.com",
-        password: "michealJackon",
-        roles: expect.any(Array),
-        created_at: expect.any(String),
-      });
+      expect(res.body.user).toEqual(expectedUser);
     });
 
     it("returns 400 status if credentials are invalid", async () => {
@@ -115,6 +118,7 @@ describe("Auth API", () => {
         .send(credentials);
 
       expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/Invalid credentials/i);
     });
 
     it("returns 400 status if any required fields are missing", async () => {
@@ -133,8 +137,9 @@ describe("Auth API", () => {
         .send(credentialsNoEmailOrUsername);
 
       expect(res1.status).toBe(400);
-
       expect(res2.status).toBe(400);
+      expect(res1.body.message).toMatch(/Please add all fields/i);
+      expect(res2.body.message).toMatch(/Please add all fields/i);
     });
   });
 
@@ -143,7 +148,7 @@ describe("Auth API", () => {
     let refreshToken: string;
 
     beforeEach(async () => {
-      testUserId = "4243fwfdwf";
+      testUserId = uuidv4();
       await db("users").insert({
         id: testUserId,
         name: "Steve Jobs",

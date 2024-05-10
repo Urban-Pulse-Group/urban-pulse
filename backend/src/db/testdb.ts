@@ -1,18 +1,26 @@
-import knex from "knex";
-import config from "./knexfile";
-export const db = knex(config.test);
-import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
-export const migrateTestDB = async () => {
+import knex from 'knex';
+import config from './knexfile';
+
+const db = knex(config.test);
+
+export async function migrateTestDB() {
   await db.migrate.latest();
-};
+}
 
-export const rollbackTestDB = async () => {
+export async function rollbackTestDB() {
   await db.migrate.rollback(undefined, true);
-};
+}
+
+export async function truncateAllTables() {
+  
 
 
-export const truncateAllTables = async () => {
-  const tables = ["users", "communities", "posts"];
+  const tables = ['refresh_tokens','users', ]; 
+
+
   await Promise.all(tables.map((table) => db(table).truncate()));
-};
+
+
+}
+
+export default db;
