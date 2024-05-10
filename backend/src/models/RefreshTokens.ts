@@ -12,12 +12,13 @@ export class RefreshTokens {
    * @param token - Refresh token
    */
   static async create(userId: string, token: string): Promise<void> {
+    let today: Date = new Date();
     await db.raw(
       `
-      INSERT INTO refresh_tokens (user_id, token)
-      VALUES (?, ?)
+      INSERT INTO refresh_tokens (user_id, token, expires_at)
+      VALUES (?, ?, ?)
       `,
-      [userId, token]
+      [userId, token, new Date(today.getTime() + (14 * 24 * 60 * 60 * 1000))  ]
     );
   }
 

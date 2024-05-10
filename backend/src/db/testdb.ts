@@ -1,7 +1,8 @@
 import knex from 'knex';
-import config from './knexfile';
+import { Knex } from 'knex';
+import knexConfig from "./knexfile";
 
-const db = knex(config.test);
+const db: Knex = knex(knexConfig["test"]);
 
 export async function migrateTestDB() {
   await db.migrate.latest();
@@ -15,10 +16,11 @@ export async function truncateAllTables() {
   
 
 
-  const tables = ['refresh_tokens','users', ]; 
 
+  await db("refresh_tokens").truncate();
+  await db("users").truncate()
 
-  await Promise.all(tables.map((table) => db(table).truncate()));
+ 
 
 
 }
