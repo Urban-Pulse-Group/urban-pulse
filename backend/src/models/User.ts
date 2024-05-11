@@ -110,16 +110,3 @@ export class Users {
   }
 }
 
-async function testHashing(password="111") {
-
-  const hash = await bcrypt.hash(password, 10);
-  console.log('Newly hashed password:', hash);
-
-  // Now compare the original input password against the new hash
-  const isMatch = await bcrypt.compare(password, '$2a$10$43.T2gxBjgjhF1I1fLDo8umc/humyTeQJZ8MpZw.CsTIfGJUKya/W');
-  console.log('Does the original password match the new hash?', isMatch);
-  console.log("hash")
-}
-
-const originalPassword = '111'; // Replace with the actual password used
-testHashing(originalPassword);

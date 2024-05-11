@@ -10,7 +10,7 @@ import db, {
 
 describe("Auth API", () => {
   beforeAll(async () => {});
-
+ db("users").del()
   afterEach(async () => {
     await db.raw(`
         DELETE FROM users`);
@@ -44,7 +44,7 @@ describe("Auth API", () => {
       expect(res.body).toHaveProperty("token");
       expect(res.body.user).toEqual(expectedUser);
         
-      const users = await db("users").select("*");
+      const users = await db("users").select();
       expect(users.length).toBe(1);
       expect(users[0]).toMatchObject({
         ...expectedUser,
@@ -89,7 +89,7 @@ describe("Auth API", () => {
       };
 
       const res = await request(app).post("/api/auth/login").send(credentials);
-      console.log(res);
+  
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("user");
       expect(res.body).toHaveProperty("token");

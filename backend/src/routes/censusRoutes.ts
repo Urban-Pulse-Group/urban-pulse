@@ -1,8 +1,8 @@
 import express from "express";
 import { getCensusData } from "../controllers/censusController";
 
-const router = express.Router();
+const cencusRouter = express.Router();
 
-router.get("/census-data", getCensusData);
+cencusRouter.get("/census-data", getCensusData);
 
-export default router;
+export default cencusRouter;

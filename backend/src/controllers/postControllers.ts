@@ -44,8 +44,9 @@ export const createPosts = asyncHandler(async (req, res) => {
    * @access Private
    */
   export const getPost = asyncHandler(async (req, res) => {
-    const { communityId } = req.params;
-    const post = await Posts.findById(communityId);
+    const { id } = req.params;
+
+    const post = await Posts.findById(id);
     if (!post) {
       res.status(404);
       throw new Error("Post not found");
