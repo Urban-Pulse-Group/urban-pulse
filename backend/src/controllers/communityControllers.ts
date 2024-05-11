@@ -1,12 +1,11 @@
 import asyncHandler from "express-async-handler";
-import db from "../db/db";
-import { ProtectedRequest } from "../types/serverTypes";
+
 import { Request, Response } from "express";
-import { Communities } from "../models/Community";
+import { Communities } from "../models/Communities";
 
 /**
  * @desc creates a community
- * @route  GET /api/community
+ * @route  DELETE /api/community
  * @access Private
  */
 export const createCommunity = asyncHandler(async (req, res) => {
@@ -14,7 +13,7 @@ export const createCommunity = asyncHandler(async (req, res) => {
 
   if (!userId || !title || !description || !category) {
     res.status(400);
-    throw new Error("User Id, Title, description, and category are required");
+    throw new Error("Missing 1 or more of the required fields");
   }
   const createdCommunity = await Communities.create(req.body);
   res.status(201).json({
@@ -28,7 +27,7 @@ export const createCommunity = asyncHandler(async (req, res) => {
  * @route  GET /api/community
  * @access Private
  */
-export const getAllCommunities = asyncHandler(async (req, res) => {
+export const getAllCommunities = asyncHandler(async (req: Request, res: Response) => {
   res.json({ data: await Communities.findAll() });
 });
 
@@ -37,7 +36,7 @@ export const getAllCommunities = asyncHandler(async (req, res) => {
  * @route  GET /api/community/:id
  * @access Private
  */
-export const getCommunity = asyncHandler(async (req, res) => {
+export const getCommunity = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const community = await Communities.findById(id);
   if (!community) {
@@ -49,10 +48,10 @@ export const getCommunity = asyncHandler(async (req, res) => {
 
 /**
  * @desc gets a single community using id retrieved frrom url params
- * @route   /api/community/:id
+ * @route   DELETE /api/community/:id
  * @access Private
  */
-export const deleteCommunity = asyncHandler(async (req, res) => {
+export const deleteCommunity = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const deletedCommunity = await Communities.delete(id);
   if (!deletedCommunity) {
