@@ -12,7 +12,8 @@ export async function up(knex: Knex): Promise<void> {
         img TEXT,
         slug TEXT NOT NULL,
         content TEXT NOT NULL,
-        created_at DATE DEFAULT NOW()
+        created_at DATE DEFAULT NOW(),
+        likes INT
      )
     `)
 }
