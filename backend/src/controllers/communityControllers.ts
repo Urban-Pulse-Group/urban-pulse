@@ -1,6 +1,5 @@
 import asyncHandler from "express-async-handler";
-import db from "../db/db";
-import { ProtectedRequest } from "../types/serverTypes";
+
 import { Request, Response } from "express";
 import { Communities } from "../models/Communities";
 
@@ -28,7 +27,7 @@ export const createCommunity = asyncHandler(async (req, res) => {
  * @route  GET /api/community
  * @access Private
  */
-export const getAllCommunities = asyncHandler(async (req, res) => {
+export const getAllCommunities = asyncHandler(async (req: Request, res: Response) => {
   res.json({ data: await Communities.findAll() });
 });
 
@@ -37,7 +36,7 @@ export const getAllCommunities = asyncHandler(async (req, res) => {
  * @route  GET /api/community/:id
  * @access Private
  */
-export const getCommunity = asyncHandler(async (req, res) => {
+export const getCommunity = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const community = await Communities.findById(id);
   if (!community) {
@@ -52,7 +51,7 @@ export const getCommunity = asyncHandler(async (req, res) => {
  * @route   /api/community/:id
  * @access Private
  */
-export const deleteCommunity = asyncHandler(async (req, res) => {
+export const deleteCommunity = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const deletedCommunity = await Communities.delete(id);
   if (!deletedCommunity) {

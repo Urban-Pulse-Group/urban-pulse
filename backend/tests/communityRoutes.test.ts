@@ -90,7 +90,7 @@ describe("Community API", () => {
             await db("communities").del();
         });
 
-        it("gets all communities from the database", async () => {
+        it("Gets all communities from the database", async () => {
             const res = await request(app).get("/api/community").send();
             const responseData = res.body.data.map(({ user_id, title, description, category }: {
                 user_id: string;
@@ -122,7 +122,7 @@ describe("Community API", () => {
         afterAll(async () => {
             await db("communities").del()
         })
-        it("gets one community based on the id passed in", async () => {
+        it("Gets one community based on the id passed in", async () => {
             const res = await request(app).get(`/api/community/${id}`).send()
             expect(res.body.data).toMatchObject({
                 id: id,

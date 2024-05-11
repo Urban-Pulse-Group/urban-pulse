@@ -9,8 +9,11 @@ export async function up(knex: Knex): Promise<void> {
         user_id  UUID REFERENCES users(id) ON DELETE CASCADE, 
         community_id UUID REFERENCES communities(id) ON DELETE CASCADE,
         title TEXT NOT NULL,
+        img TEXT,
+        slug TEXT NOT NULL,
         content TEXT NOT NULL,
-        created_at DATE DEFAULT NOW()
+        created_at DATE DEFAULT NOW(),
+        likes INT
      )
     `)
 }

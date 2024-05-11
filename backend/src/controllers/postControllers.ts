@@ -1,9 +1,6 @@
 import asyncHandler from "express-async-handler";
-import db from "../db/db";
-import { ProtectedRequest } from "../types/serverTypes";
 import { Request, Response } from "express";
 import { Posts } from "../models/Posts";
-import express from "express";
 
 
 /**
@@ -11,10 +8,10 @@ import express from "express";
  * @route  GET /api/post
  * @access Private
  */
-export const createPosts = asyncHandler(async (req, res) => {
-    const { userId, title, content, community_id} = req.body;
+export const createPosts = asyncHandler(async (req: Request, res: Response) => {
+    const { userId, title, content, communityId, slugs} = req.body;
   
-    if (!userId || !title || !content || !community_id) {
+    if (!userId || !title || !content || !communityId || slugs) {
       res.status(400);
       throw new Error("Missing 1 or more required feilds");
     }
@@ -34,7 +31,7 @@ export const createPosts = asyncHandler(async (req, res) => {
    * @route  GET /api/post
    * @access Private
    */
-  export const getAllPosts = asyncHandler(async (req, res) => {
+  export const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
     res.json({ data: await Posts.findAll() });
   });
   
@@ -43,7 +40,7 @@ export const createPosts = asyncHandler(async (req, res) => {
    * @route  GET /api/post/:id
    * @access Private
    */
-  export const getPost = asyncHandler(async (req, res) => {
+  export const getPost = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const post = await Posts.findById(id);
@@ -55,11 +52,11 @@ export const createPosts = asyncHandler(async (req, res) => {
   });
   
   /**
-   * @desc gets a single Post using id retrieved frrom url params
+   * @desc deletes a single Post using id retrieved frrom url params
    * @route   /api/post/:id
    * @access Private
    */
-  export const deletePost = asyncHandler(async (req, res) => {
+  export const deletePost = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const deletedPost = await Posts.delete(id);
     if (!deletedPost) {
