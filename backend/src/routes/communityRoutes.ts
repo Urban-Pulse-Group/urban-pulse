@@ -1,5 +1,6 @@
-import { Router } from "express";
+import express, { Router }  from "express";
 import { protect } from "../middleware/authMiddleware";
+
 import {
   createCommunity,
   deleteCommunity,
@@ -7,10 +8,10 @@ import {
   getAllCommunities,
 } from "../controllers/communityControllers";
 
-const router: Router = Router();
+const communityRouter: Router = express.Router();
 
-router.post("/",  createCommunity);
-router.get("/", protect, getAllCommunities);
-router.get("/:id", protect, getCommunity);
-router.delete("/:id", protect, deleteCommunity);
-export default router;
+communityRouter.post("/",  createCommunity);
+communityRouter.get("/", protect, getAllCommunities);
+communityRouter.get("/:id", protect, getCommunity);
+communityRouter.delete("/:id", protect, deleteCommunity);
+export default communityRouter;

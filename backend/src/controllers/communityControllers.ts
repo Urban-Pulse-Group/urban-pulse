@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import db from "../db/db";
 import { ProtectedRequest } from "../types/serverTypes";
 import { Request, Response } from "express";
-import { Communities } from "../models/Community";
+import { Communities } from "../models/Communities";
 
 /**
  * @desc creates a community
@@ -14,7 +14,7 @@ export const createCommunity = asyncHandler(async (req, res) => {
 
   if (!userId || !title || !description || !category) {
     res.status(400);
-    throw new Error("User Id, Title, description, and category are required");
+    throw new Error("Missing 1 or more of the required fields");
   }
   const createdCommunity = await Communities.create(req.body);
   res.status(201).json({

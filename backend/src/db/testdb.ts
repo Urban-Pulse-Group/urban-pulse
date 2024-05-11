@@ -10,7 +10,7 @@ export async function migrateTestDB() {
 }
 
 export async function rollbackTestDB() {
-  await db.migrate.rollback(undefined, true);
+
 }
 
 export async function truncateAllTables() {

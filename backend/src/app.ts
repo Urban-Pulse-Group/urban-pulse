@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import { errorHandler } from "./middleware/errorMiddleware";
 import { logRequests } from "./middleware/loggingMiddleware";
 import dotenv from "dotenv";
+import postRouter from "./routes/postRoutes";
 import communityRouter from "./routes/communityRoutes";
 dotenv.config();
 
@@ -21,9 +22,10 @@ app.use(express.json());
 app.use(logRequests);
 
 
-app.use("/api/community", communityRouter);
-app.use("/api/census", censusRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/census", censusRouter);
+app.use("/api/community", communityRouter);
+app.use("/api/post", postRouter)
 
 app.use(errorHandler);
 const PORT: number | string = process.env.PORT ?? 4040;
