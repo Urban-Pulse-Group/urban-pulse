@@ -28,7 +28,7 @@ export class Replies {
   
   /**
    * @desc Gets the reply that correlates to the Post id passed in
-   * @returns The threads that relates to the given Post id, null if not
+   * @returns The reply that relates to the given Post id, null if not
    */
   static async findByThread(threadId: string): Promise<Reply| null> {
     const { rows } = await db.raw(
@@ -46,7 +46,7 @@ export class Replies {
 
     /**
    * @desc Gets the reply that correlates to the id passed in
-   * @returns The thread with the given id, null if not
+   * @returns The reply with the given id, null if not
    */
   static async findById(replyId: string): Promise<Reply| null> {
     const { rows } = await db.raw(
@@ -68,7 +68,7 @@ export class Replies {
     /**
      * 
      * @desc Deletes reply with the given ID
-     * @returns Deleted thread if successfully deleted
+     * @returns Deleted reply if successfully deleted
      */
   static async delete(replyId: string): Promise<Reply> {
     const { rows } = await db.raw(
