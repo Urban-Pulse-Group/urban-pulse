@@ -34,8 +34,8 @@
   },
   "include": [
     "src",
-    "app/components/button.tsx",
-    "app/components/input.tsx",
+    "app/components/Button.tsx",
+    "app/components/Input.tsx",
     "app/components/label.tsx"
   ],
   "references": [{ "path": "tsconfig.node.json" }]
