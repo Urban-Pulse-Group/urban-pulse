@@ -5,7 +5,7 @@ import { Communities } from "../models/Communities";
 
 /**
  * @desc creates a community
- * @route  GET /api/community
+ * @route  DELETE /api/community
  * @access Private
  */
 export const createCommunity = asyncHandler(async (req, res) => {
@@ -48,7 +48,7 @@ export const getCommunity = asyncHandler(async (req: Request, res: Response) => 
 
 /**
  * @desc gets a single community using id retrieved frrom url params
- * @route   /api/community/:id
+ * @route   DELETE /api/community/:id
  * @access Private
  */
 export const deleteCommunity = asyncHandler(async (req: Request, res: Response) => {

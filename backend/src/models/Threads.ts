@@ -38,8 +38,8 @@ export class Threads {
         `,
       [PostId]
     );
-    const communityExists = rows.length > 0;
-    if (!communityExists) {
+    const threadExists = rows.length > 0;
+    if (!threadExists) {
       return null;
     }
     return rows[0];

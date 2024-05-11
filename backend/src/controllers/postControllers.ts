@@ -5,7 +5,7 @@ import { Posts } from "../models/Posts";
 
 /**
  * @desc creates a post
- * @route  GET /api/post
+ * @route  POST /api/post
  * @access Private
  */
 export const createPosts = asyncHandler(async (req: Request, res: Response) => {
@@ -53,7 +53,7 @@ export const createPosts = asyncHandler(async (req: Request, res: Response) => {
   
   /**
    * @desc deletes a single Post using id retrieved frrom url params
-   * @route   /api/post/:id
+   * @route   DELETE /api/post/:id
    * @access Private
    */
   export const deletePost = asyncHandler(async (req: Request, res: Response) => {

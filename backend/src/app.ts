@@ -10,6 +10,7 @@ import dotenv from "dotenv";
 import postRouter from "./routes/postRoutes";
 import communityRouter from "./routes/communityRoutes";
 import threadRouter from "./routes/threadRoutes";
+import replyRouter from "./routes/replyRoutes";
 dotenv.config();
 
 export const app: Application = express();
@@ -27,6 +28,7 @@ app.use("/api/census", censusRouter);
 app.use("/api/community", communityRouter);
 app.use("/api/post", postRouter);
 app.use("/api/thread", threadRouter)
+app.use("/api/reply", replyRouter)
 
 app.use(errorHandler);
 const PORT: number | string = process.env.PORT ?? 4040;
