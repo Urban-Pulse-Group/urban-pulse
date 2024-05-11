@@ -7,7 +7,7 @@ import express from "express";
 
 /**
  * @desc creates a thread
- * @route  GET /api/thread
+ * @route  POST /api/thread
  * @access Private
  */
 export const createThread = asyncHandler(
@@ -42,39 +42,39 @@ export const getThreadsOfPost = asyncHandler(async (req: Request, res: Response)
     res.status(404);
     throw new Error("No threads found for the given id");
   }
-  res.json({ data: await Threads.findByPost(postId) });
+  res.json({ data: threads});
 });
 
 /**
- * @desc gets a single post using id retrieved from url params
+ * @desc gets a single Thread using id retrieved from url params
  * @route  GET /api/singleThread/:id
  * @access Private
  */
 export const getThread = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 console.log("id:", id)
-  const post = await Threads.findById(id);
-  if (!post) {
+  const thread = await Threads.findById(id);
+  if (!thread) {
     res.status(404);
-    throw new Error("Post not found");
+    throw new Error("Thread not found");
   }
-  res.json({ data: post });
+  res.json({ data: thread });
 });
 
 /**
  * @desc deletes a single Thread using id retrieved frrom url params
- * @route   /api/thread/:id
+ * @route   DELETE /api/thread/:id
  * @access Private
  */
 export const deleteThread = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const deletedPost = await Threads.delete(id);
-  if (!deletedPost) {
+  const deletedThread = await Threads.delete(id);
+  if (!deletedThread) {
     res.status(404);
     throw new Error("Unable to delete: Thread not found");
   }
   res.json({
     message: "Deleted successfully!",
-    data: deletedPost,
+    data: deletedThread,
   });
 });
