@@ -48,7 +48,7 @@ export const registerUser = asyncHandler(
       console.log("token:", token)
       delete newUser.password;
       res.status(201).json({
-        ...newUser,
+        user: {...newUser},
         token,
       });
     } else {
@@ -78,7 +78,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     const token = generateAccessToken(user.id!);
     delete user.password; 
     res.json({
-      ...user,
+      user: {...user},
       token,
     });
   } else {

@@ -42,7 +42,7 @@ export class Posts {
    * @desc Gets the Post that correlates to the ID passed in
    * @returns The Post with the given ID if found, null if not
    */
-  static async find(id: string): Promise<Post | null> {
+  static async findById(id: string): Promise<Post | null> {
     const { rows } = await db.raw(
       `SELECT * FROM posts
        WHERE id = ?

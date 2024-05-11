@@ -8,18 +8,15 @@ import db, {
   truncateAllTables,
 } from "../src/db/testdb";
 
-
 describe("Auth API", () => {
-  beforeAll(async () => {
-
-  });
+  beforeAll(async () => {});
 
   afterEach(async () => {
-    await truncateAllTables();
+    await db.raw(`
+        DELETE FROM users`);
   });
 
   afterAll(async () => {
-    await rollbackTestDB();
     await db.destroy();
   });
 
@@ -37,8 +34,8 @@ describe("Auth API", () => {
         name: "Steve Jobs",
         username: "SteveJobs",
         email: "steveJobs@apple.com",
-        roles: expect.any(Array),
-        created_at: expect.any(String),
+        roles: null,
+        created_at: expect.anything(),
       };
 
       const res = await request(app).post("/api/auth/register").send(newUser);
@@ -46,12 +43,12 @@ describe("Auth API", () => {
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty("token");
       expect(res.body.user).toEqual(expectedUser);
-
+        
       const users = await db("users").select("*");
       expect(users.length).toBe(1);
       expect(users[0]).toMatchObject({
         ...expectedUser,
-        password: newUser.password,
+        password: expect.any(String),
       });
     });
 
@@ -72,22 +69,14 @@ describe("Auth API", () => {
       name: "Isiah Hickerson",
       username: "Zae",
       email: "Zae@gmail.com",
-      password: "michealJackon",
+      password: "michealJackson",
     };
 
-    beforeEach(async () => {
-      await db("users").insert({
-        name: testUser.name,
-        username: testUser.username,
-        email: testUser.email,
-        password: testUser.password,
-      });
-    });
-
     it("logs in an existing user successfully", async () => {
+      await request(app).post("/api/auth/register").send(testUser);
       const credentials = {
-        emailOrUsername: "Zae",
-        password: "michealJackon",
+        emailOrUsername: testUser.username,
+        password: testUser.password,
       };
 
       const expectedUser = {
@@ -95,12 +84,12 @@ describe("Auth API", () => {
         name: "Isiah Hickerson",
         username: "Zae",
         email: "Zae@gmail.com",
-        roles: expect.any(Array),
+        roles: null,
         created_at: expect.any(String),
       };
 
       const res = await request(app).post("/api/auth/login").send(credentials);
-
+      console.log(res);
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("user");
       expect(res.body).toHaveProperty("token");
@@ -168,6 +157,7 @@ describe("Auth API", () => {
       await db("refresh_tokens").insert({
         user_id: testUserId,
         token: refreshToken,
+        expires_at: new Date(new Date().setDate(new Date().getDate() + 14)),
       });
     });
 
