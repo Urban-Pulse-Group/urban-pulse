@@ -1,8 +1,9 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "./button";
+import { Button } from "./Button";
 import { useAuth } from "../state/authStore";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+import Logo from "./Logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,14 +31,12 @@ export default function NavBar() {
   return (
     <div>
       <nav className="flex   p-1 px-10 items-center  justify-between">
-        <div className="w-[220px]  ml-[-3rem] md:m-0">
-          <img src="/logo.svg" alt="logo" />
-        </div>
+        <Logo />
 
         <ul className="hidden md:flex w-fit px-14 items-center h-fit gap-10">
           {items.map((item) => {
             return (
-              <li 
+              <li
                 key={Math.floor(Math.random() * 23443243)}
                 className=" text-lg h-fit">
                 <Link to={item.link}>{item.name}</Link>
@@ -74,7 +73,7 @@ export default function NavBar() {
           )}
         </ul>
 
-        <HamburgerMenuIcon   className="block md:hidden scale-[1.6] cursor-pointer "/>
+        <HamburgerMenuIcon className="block md:hidden scale-[1.6] cursor-pointer " />
       </nav>
     </div>
   );
@@ -96,5 +95,9 @@ const items: NavbarItem[] = [
   {
     link: "/map",
     name: "Map",
+  },
+  {
+    link: "/forum",
+    name: "Communities",
   },
 ];
