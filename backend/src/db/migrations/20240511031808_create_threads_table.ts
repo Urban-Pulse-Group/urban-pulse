@@ -8,8 +8,8 @@ export async function up(knex: Knex): Promise<void> {
         id  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id  UUID REFERENCES users(id) ON DELETE CASCADE,
         post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
-        content TEXT NOT NULL
-        created_at DATE DEFAULT NOW(),
+        content TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
         likes INT
     )
     `)

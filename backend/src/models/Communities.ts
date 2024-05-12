@@ -1,11 +1,13 @@
+import { countReset } from "console";
 import db from "../db/db";
+import { Response } from "express";
 
 export interface Community {
   id?: string;
   userId: string;
   title: string;
   description: string;
-  category: string;
+  img: string
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -15,22 +17,23 @@ export class Communities {
    * @desc Creates a Community with the values passed in
    * @returns Created community if it was successfully created, null if it was not
    */
-  static async create(vals: Community): Promise<Community | null> {
-    const { userId, title, description, category } = vals;
+  static async create(res: Response, vals: Community): Promise<Community | null> {
+    const { userId, title, description, img } = vals;
+
     const { rows } = await db.raw(
       `
-      INSERT INTO communities ( user_id, title, description, category)
+      INSERT INTO communities ( user_id, title, description, img)
       VALUES (?, ?, ?, ?)
       RETURNING *
     `,
-      [userId, title, description, category]
+      [userId, title.toLowerCase(), description, img ?? ""]
     );
 
     const communityExists = rows.length > 0;
     if (!communityExists) {
       return null;
     }
-    return rows[0]
+    return rows[0];
   }
 
   static async findAll() {
@@ -44,7 +47,7 @@ export class Communities {
    * @desc Finds Community with an ID that is equal to the ID passed in
    * @returns Community with the given ID if it was found, null if it was not
    */
-  static async findById(id: string): Promise<Community| null> {
+  static async findById(id: string): Promise<Community | null> {
     const { rows } = await db.raw(
       `
       SELECT * FROM communities
@@ -59,8 +62,8 @@ export class Communities {
     return rows[0];
   }
 
- /**
-  * @desc Deletes community with the given ID
+  /**
+   * @desc Deletes community with the given ID
    * @returns Deleted community if it was found, null if it was not
    */
   static async delete(id: string): Promise<Community | null> {
