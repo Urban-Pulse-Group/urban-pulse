@@ -9,13 +9,13 @@ import { Communities } from "../models/Communities";
  * @access Private
  */
 export const createCommunity = asyncHandler(async (req, res) => {
-  const { userId, title, description, category } = req.body;
+  const { userId, title, description} = req.body;
 
-  if (!userId || !title || !description || !category) {
+  if (!userId || !title || !description) {
     res.status(400);
     throw new Error("Missing 1 or more of the required fields");
   }
-  const createdCommunity = await Communities.create(req.body);
+  const createdCommunity = await Communities.create(res, req.body);
   if (!createCommunity) {
     res.status(500);
     throw new Error("Unable to create community");

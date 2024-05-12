@@ -15,7 +15,8 @@ import ForumPopular from "./pages/forum-pages/ForumPopular";
 import ForumAll from "./pages/forum-pages/ForumAll";
 
 export default function App() {
-  const { getUser, setUser, setIsLoggedIn, isLoggedIn } = useAuth();
+  const { getUser, setUser, setIsLoggedIn, isLoggedIn, user } = useAuth();
+  console.log(isLoggedIn)
 
   useEffect(() => {
     const fetchUser = async () => {

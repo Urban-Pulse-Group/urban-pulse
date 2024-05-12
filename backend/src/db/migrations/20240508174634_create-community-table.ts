@@ -7,8 +7,8 @@ export async function up(knex: Knex): Promise<void> {
       id  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id  UUID REFERENCES users(id) ON DELETE CASCADE,
         title TEXT NOT NULL,
+        img TEXT NOT NULL,
         description TEXT NOT NULL,
-        category TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
     )
   `);
@@ -16,6 +16,7 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
   return knex.schema.raw(`
-  DROP TABLE IF EXISTS community 
+  DROP TABLE IF EXISTS community
   `);
 }
+

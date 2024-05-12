@@ -20,6 +20,7 @@ export const useAuth = create<AuthState>((set, get) => ({
   user: null,
   isLoggedIn: false,
   token: localStorage.getItem("token"),
+
   getUser: async () => {
     try {
       const res = await authenticatedFetch(
@@ -27,11 +28,13 @@ export const useAuth = create<AuthState>((set, get) => ({
         get().token
       );
       const data = await res.json();
-      set({ user: data.user, isLoggedIn: true });
-      if ("token" in data) {
-        localStorage.setItem("token", data.token);
+      if (data?.user) {
+        set({ user: data.user, isLoggedIn: true });
+        if ("token" in data) {
+          localStorage.setItem("token", data.token);
+        }
+        return data.user;
       }
-      return data.user;
     } catch (error) {
       console.error("User not authenticated:", error);
       set({ user: null, isLoggedIn: false });

@@ -53,7 +53,7 @@ export default function NavBar() {
             <li className="cursor-pointer">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar>
+                  <Avatar className="w-10 h-10">
                     <AvatarFallback>{user?.name.split("")[0]}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
