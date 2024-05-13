@@ -52,6 +52,7 @@ import { authenticatedFetch } from "../utils/fetchUtils";
 import { useAuth } from "../state/authStore";
 import { Description } from "@radix-ui/react-dialog";
 import LoadingOverlay from "./LoadingOverlay";
+import { useNavigate } from "react-router-dom";
 interface FormData {
   title: string;
   description: string;
@@ -76,6 +77,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
     description: "",
     imageUpload: null,
   });
+  const navigate = useNavigate();
   const path = location.pathname;
   console.log("user", user);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,7 +129,9 @@ export default function Sidebar({ children }: { children: ReactNode }) {
     }
     setLoading(false);
   };
-
+  const handleMobileNavigate = (src: string) => {
+    navigate(src)
+  }
   const fetchRecentCommunities = async () => {
     try {
       const res = await authenticatedFetch(
@@ -354,11 +358,11 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                 >
                   <Logo></Logo>
                 </Link>
-                <SheetClose className="border-b">
+             
                   {items.map((item) => {
                     return (
-                      <Link
-                        to={item.path}
+                      <SheetClose
+                       onClick={() => handleMobileNavigate(item.path)}
                         className={`${
                           path.includes(item.path)
                             ? "bg-muted text-primary"
@@ -367,10 +371,10 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                       >
                         {item.icon}
                         {item.title}
-                      </Link>
+                      </SheetClose>
                     );
                   })}
-                </SheetClose>
+            
 
                 <Accordion
                   defaultValue={["item-1", "item-2", "item-3"]}
