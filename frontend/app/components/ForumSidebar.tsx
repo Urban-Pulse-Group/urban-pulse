@@ -131,8 +131,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
     setLoading(false);
   };
   const handleMobileNavigate = (src: string) => {
-    navigate(src)
-  }
+    navigate(src);
+  };
   const fetchRecentCommunities = async () => {
     try {
       const res = await authenticatedFetch(
@@ -299,20 +299,23 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                     </Dialog>
 
                     <div className="flex items-center ml-[-1rem] w-full justify-center flex-col">
-                      {recentCommunities
-                        .slice(
-                          0,
-                          showAllCommunities ? recentCommunities.length : 7
-                        )
-                        .map((community) => (
-                          <Link
-                            to={`/community/${community.id}`}
-                            key={community.id}
-                          >
-                            {community.title}
-                          </Link>
-                        ))}
-                      {/* Show more button if there are more than 7 communities */}
+                      {recentCommunities.length > 0 ? (
+                        recentCommunities
+                          .slice(
+                            0,
+                            showAllCommunities ? recentCommunities.length : 7
+                          )
+                          .map((community) => (
+                            <Link
+                              to={`/community/${community.id}`}
+                              key={community.id}
+                            >
+                              {community.title}
+                            </Link>
+                          ))
+                      ) : (
+                        <div>None so far</div>
+                      )}
                       {recentCommunities.length > 7 && !showAllCommunities && (
                         <button onClick={handleShowMoreCommunities}>
                           Show More
@@ -373,23 +376,22 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                 >
                   <Logo></Logo>
                 </Link>
-             
-                  {items.map((item) => {
-                    return (
-                      <SheetClose
-                       onClick={() => handleMobileNavigate(item.path)}
-                        className={`${
-                          path.includes(item.path)
-                            ? "bg-muted text-primary"
-                            : "text-muted-foreground"
-                        } mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 transition-all  duration-300`}
-                      >
-                        {item.icon}
-                        {item.title}
-                      </SheetClose>
-                    );
-                  })}
-            
+
+                {items.map((item) => {
+                  return (
+                    <SheetClose
+                      onClick={() => handleMobileNavigate(item.path)}
+                      className={`${
+                        path.includes(item.path)
+                          ? "bg-muted text-primary"
+                          : "text-muted-foreground"
+                      } mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 transition-all  duration-300`}
+                    >
+                      {item.icon}
+                      {item.title}
+                    </SheetClose>
+                  );
+                })}
 
                 <Accordion
                   defaultValue={["item-1", "item-2", "item-3"]}
