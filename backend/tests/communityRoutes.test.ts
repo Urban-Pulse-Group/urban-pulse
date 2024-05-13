@@ -1,18 +1,22 @@
 import request from "supertest";
-import { app } from "../src/app";
+
 import { Communities, Community } from "../src/models/Communities";
 import { User, Users } from "../src/models/User";
 import { startServer, closeServer } from "../src/testSetup";
 import { v4 as uuid } from "uuid";
 import db from "../src/db/testdb";
+import { start } from "repl";
+import { Server } from "http";
 describe("Community API", () => {
-  let user: User;
+  let user: User | null;
+  let app: Server
 
   const setUser = (newUser: User) => (user = newUser);
   beforeAll(async () => {
-    await startServer();
+    app = await startServer()
+
     db("users").del();
-    let user = await Users.create({
+     user = await Users.create({
       username: "testing",
       password: "testing",
       name: "testing",
@@ -27,26 +31,24 @@ describe("Community API", () => {
   describe("POST /api/community", () => {
     it("successfully creates a Community and sends 201 status", async () => {
       const formData = {
-        userId: user.id,
+        userId: user?.id,
         title: "nyc",
         description: " nyc community",
-        category: "city",
       };
 
       const expectedRes = {
         id: expect.any(String),
-        userId: user.id,
+        user_id: user?.id,
         title: "nyc",
         description: " nyc community",
-          category: "city",
           img: "",
         created_at: expect.anything(),
       };
 
       const res = await request(app).post("/api/community").send(formData);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(201);
       expect(res.body.data).toEqual(expectedRes);
-      expect(res.body.message).toMatch(/Post created successfully/i);
+      expect(res.body.message).toMatch(/Community created successfully/i);
     });
 
     it("sends 400 status if any of the required fields are missing from the request body", async () => {
@@ -78,25 +80,24 @@ describe("Community API", () => {
         title: "Gardening Enthusiasts",
         description:
           "A community for people who enjoy gardening and sharing tips about plants.",
-        category: "Hobby",
+          img: ""
       },
       {
         user_id: id,
         title: "Tech Innovators",
         description:
           "A place to discuss the latest in tech, gadgets, and software development.",
-        category: "Technology",
+          img: ""
       },
       {
         user_id: id,
         title: "Fitness Freaks",
         description:
           "Community dedicated to fitness enthusiasts who love to keep active and healthy.",
-        category: "Health & Fitness",
+          img: ""
       },
     ];
     beforeAll(async () => {
-      await db("users").insert(newUser);
       await db("communities").del();
       await db("communities").insert(communitiesData);
     });
@@ -112,20 +113,20 @@ describe("Community API", () => {
           user_id,
           title,
           description,
-          category,
+          img,
         }: {
           user_id: string;
           title: string;
           description: string;
-          category: string;
+          img: string;  
           created_at?: Date;
         }) => ({
           user_id,
           title,
           description,
-          category,
+          img, 
         })
-      );
+    );
       expect(responseData).toEqual(communitiesData);
     });
   });
@@ -136,10 +137,9 @@ describe("Community API", () => {
     beforeAll(async () => {
       let comId = await db("communities")
         .insert({
-          userId: user.id,
+          userId: user?.id,
           title: "nyc",
           description: "nyc community",
-          category: "city",
         })
         .returning("id");
       id = comId[0];
@@ -151,7 +151,7 @@ describe("Community API", () => {
       const res = await request(app).get(`/api/community/${id}`).send();
       expect(res.body.data).toMatchObject({
         id: id,
-        user_id: user.id,
+        user_id: user?.id,
         title: "nyc",
         description: "nyc community",
         category: "city",

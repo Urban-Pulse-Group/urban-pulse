@@ -1,17 +1,17 @@
 import request from "supertest";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import { app } from "../src/app";
+import { Server } from "http";
 import { startServer, closeServer } from "../src/testSetup";
 import db, {
   migrateTestDB,
   rollbackTestDB,
   truncateAllTables,
 } from "../src/db/testdb";
-
+let app: Server;
 describe("Auth API", () => {
   beforeAll(async () => {
-    await startServer();
+    app = await startServer();
   });
   db("users").del();
   afterEach(async () => {
