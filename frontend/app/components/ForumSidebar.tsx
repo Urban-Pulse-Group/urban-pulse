@@ -69,6 +69,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
   const [imageSrc, setImageSrc] = useState<string>("");
   const [fileError, setFileError] = useState<string>("");
   const [recentCommunities, setRecentCommunities] = useState<Community[]>([]);
+  const [showAllCommunities, setShowAllCommunities] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [communityNameInitial, setCommunityNameInitial] = useState<string>("");
   const [formData, setFormData] = useState<FormData>({
@@ -148,6 +149,10 @@ export default function Sidebar({ children }: { children: ReactNode }) {
     fetchRecentCommunities();
   }, [recentCommunities]);
 
+  const handleShowMoreCommunities = () => {
+    setShowAllCommunities(true);
+  };
+
   return (
     <div className="grid min-h-screen  fixed w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ">
       <div className="hidden border-r  bg-muted/40 md:block">
@@ -208,7 +213,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                         <DialogHeader>
                           <DialogTitle>Create a community</DialogTitle>
                           <DialogDescription>
-                            Insert the required feilds needed to make a
+                            Insert the required fields needed to make a
                             community
                           </DialogDescription>
                         </DialogHeader>
@@ -290,14 +295,24 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                     </Dialog>
 
                     <div className="flex items-center ml-[-1rem] w-full justify-center flex-col">
-                      {recentCommunities.length > 0 ? (
-                        <ul>
-                          {recentCommunities.map((community) => (
-                            <li key={community.id}>{community.title}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <div>None so far</div>
+                      {recentCommunities
+                        .slice(
+                          0,
+                          showAllCommunities ? recentCommunities.length : 7
+                        )
+                        .map((community) => (
+                          <Link
+                            to={`/community/${community.id}`}
+                            key={community.id}
+                          >
+                            {community.title}
+                          </Link>
+                        ))}
+                      {/* Show more button if there are more than 7 communities */}
+                      {recentCommunities.length > 7 && !showAllCommunities && (
+                        <button onClick={handleShowMoreCommunities}>
+                          Show More
+                        </button>
                       )}
                     </div>
                   </AccordionContent>
