@@ -112,6 +112,7 @@
     "./tests",
     "jest.config.ts",
     "tests",
+    "testSetup.ts"
   
   ]
 }
