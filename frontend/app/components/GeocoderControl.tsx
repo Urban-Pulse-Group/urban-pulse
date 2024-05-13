@@ -88,6 +88,7 @@ const GeocoderControlComponent: React.FC<GeocoderControlProps> = ({
           }
         } else {
           console.log("Location not found in API data");
+          onCensusDataReceived(null);
           
         }
       } catch (error) {
