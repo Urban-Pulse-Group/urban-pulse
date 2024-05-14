@@ -12,6 +12,6 @@ const communityRouter: Router = express.Router();
 
 communityRouter.post("/",  createCommunity);
 communityRouter.get("/", protect, getAllCommunities);
-communityRouter.get("/:id", protect, getCommunity);
+communityRouter.get("/:slugs", protect, getCommunity);
 communityRouter.delete("/:id", protect, deleteCommunity);
 export default communityRouter;
