@@ -56,6 +56,7 @@ export class Communities {
    * @returns Community with the given ID if it was found, null if it was not
    */
   static async findBySlugs(slugs: string): Promise<Community | null> {
+    console.log("slugs:", slugs)
     const { rows } = await db.raw(
       `
       SELECT * FROM communities
