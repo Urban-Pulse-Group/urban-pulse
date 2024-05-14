@@ -21,6 +21,7 @@ export default function App() {
   useEffect(() => {
     const fetchUser = async () => {
       const user = await getUser();
+      console.log("failed:L", user)
       if (user) {
         setUser(user);
         setIsLoggedIn(true);
@@ -28,7 +29,7 @@ export default function App() {
     };
     fetchUser();
   }, [isLoggedIn]);
-
+console.log(user)
   return (
    
       <Router>

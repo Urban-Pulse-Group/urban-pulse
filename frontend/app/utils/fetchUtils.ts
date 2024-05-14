@@ -1,8 +1,8 @@
 export const authenticatedFetch = async (
     url: string,
+    token: string | null,
     options: RequestInit = {}
-): Promise<Response> => {
-    const token = localStorage.get("token")
+  ): Promise<Response> => {
     if (!token) {
       throw new Error("No authentication token provided");
     }
