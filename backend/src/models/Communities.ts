@@ -1,13 +1,13 @@
 import { countReset } from "console";
 import db from "../db/db";
 import { Response } from "express";
-
+import slugify from "slugify";
 export interface Community {
   id?: string;
   userId: string;
   title: string;
   description: string;
-  img: string
+  img: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -17,16 +17,23 @@ export class Communities {
    * @desc Creates a Community with the values passed in
    * @returns Created community if it was successfully created, null if it was not
    */
-  static async create(res: Response, vals: Community): Promise<Community | null> {
+  static async create(
+    res: Response,
+    vals: Community
+  ): Promise<Community | null> {
     const { userId, title, description, img } = vals;
-
+    const slugs = slugify(title, {
+      lower: true,
+      strict: true,
+      remove: /[*+~.()'"!:@]/g,
+    });
     const { rows } = await db.raw(
       `
-      INSERT INTO communities ( user_id, title, description, img)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO communities ( user_id, title, description, img, slugs)
+      VALUES (?, ?, ?, ?, ?)
       RETURNING *
     `,
-      [userId, title.toLowerCase(), description, img ?? ""]
+      [userId, title.toLowerCase(), description, img ?? "", slugs]
     );
 
     const communityExists = rows.length > 0;
