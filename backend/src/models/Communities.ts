@@ -52,16 +52,16 @@ export class Communities {
   }
 
   /**
-   * @desc Finds Community with an ID that is equal to the ID passed in
+   * @desc Finds Community with the given slugs ID that is equal to the ID passed in
    * @returns Community with the given ID if it was found, null if it was not
    */
-  static async findById(id: string): Promise<Community | null> {
+  static async findBySlugs(slugs: string): Promise<Community | null> {
     const { rows } = await db.raw(
       `
       SELECT * FROM communities
-      WHERE id = ?
+      WHERE slugs = ?
     `,
-      [id]
+      [slugs]
     );
     const communityExists = rows.length > 0;
     if (!communityExists) {

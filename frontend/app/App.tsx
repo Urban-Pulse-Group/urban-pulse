@@ -13,7 +13,7 @@ import AboutUs from "./pages/AboutUs";
 import ForumHome from "./pages/forum-pages/Forum";
 import ForumPopular from "./pages/forum-pages/ForumPopular";
 import ForumAll from "./pages/forum-pages/ForumAll";
-import Community from "./pages/Community";
+import CommunityPage from "./pages/Community";
 export default function App() {
   const { getUser, setUser, setIsLoggedIn, isLoggedIn, user } = useAuth();
   console.log(isLoggedIn)
@@ -42,7 +42,7 @@ export default function App() {
           <Route path="home" element={<ForumHome />} />
           <Route path="popular" element={<ForumPopular />} />
           <Route path="all" element={<ForumAll />} />
-          <Route path="communities/:slugs" element={<Community />} />
+          <Route path="communities/:slugs" element={<CommunityPage  />} />
         </Route>
 
           <Route path="/login" element={<Login />} />
