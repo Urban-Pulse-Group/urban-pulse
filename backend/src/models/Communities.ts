@@ -1,15 +1,16 @@
 import { countReset } from "console";
 import db from "../db/db";
 import { Response } from "express";
-
+import slugify from "slugify";
 export interface Community {
   id?: string;
   userId: string;
   title: string;
   description: string;
-  img: string
+  img: string;
   createdAt?: Date;
   updatedAt?: Date;
+  slugs?: string
 }
 
 export class Communities {
@@ -17,16 +18,23 @@ export class Communities {
    * @desc Creates a Community with the values passed in
    * @returns Created community if it was successfully created, null if it was not
    */
-  static async create(res: Response, vals: Community): Promise<Community | null> {
+  static async create(
+    res: Response,
+    vals: Community
+  ): Promise<Community | null> {
     const { userId, title, description, img } = vals;
-
+    const slugs = slugify(title, {
+      lower: true,
+      strict: true,
+      remove: /[*+~.()'"!:@]/g,
+    });
     const { rows } = await db.raw(
       `
-      INSERT INTO communities ( user_id, title, description, img)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO communities ( user_id, title, description, img, slugs)
+      VALUES (?, ?, ?, ?, ?)
       RETURNING *
     `,
-      [userId, title.toLowerCase(), description, img ?? ""]
+      [userId, title.toLowerCase(), description, img ?? "", slugs]
     );
 
     const communityExists = rows.length > 0;
@@ -44,16 +52,16 @@ export class Communities {
   }
 
   /**
-   * @desc Finds Community with an ID that is equal to the ID passed in
+   * @desc Finds Community with the given slugs ID that is equal to the ID passed in
    * @returns Community with the given ID if it was found, null if it was not
    */
-  static async findById(id: string): Promise<Community | null> {
+  static async findBySlugs(slugs: string): Promise<Community | null> {
     const { rows } = await db.raw(
       `
       SELECT * FROM communities
-      WHERE id = ?
+      WHERE slugs = ?
     `,
-      [id]
+      [slugs]
     );
     const communityExists = rows.length > 0;
     if (!communityExists) {

@@ -53,16 +53,23 @@ import { useAuth } from "../state/authStore";
 import { Description } from "@radix-ui/react-dialog";
 import LoadingOverlay from "./LoadingOverlay";
 import { useNavigate } from "react-router-dom";
+export interface Community {
+  id?: string;
+  userId: string;
+  title: string;
+  description: string;
+  img: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  slugs: string;
+}
 interface FormData {
   title: string;
   description: string;
   imageUpload: File | null;
 }
 
-interface Community {
-  title: string;
-  id: number;
-}
+
 
 export default function Sidebar({ children }: { children: ReactNode }) {
   const location = useLocation();
@@ -124,6 +131,11 @@ export default function Sidebar({ children }: { children: ReactNode }) {
           }),
         }
       );
+      const responseData = await res.json();
+      setRecentCommunities((recentCommunities) => [
+        ...recentCommunities,
+        responseData.data,
+      ]);
       console.log(res);
     } catch (err) {
       console.log(err);
@@ -151,7 +163,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchRecentCommunities();
-  }, [recentCommunities]);
+  }, []);
 
   const handleShowMoreCommunities = () => {
     setShowAllCommunities(true);
@@ -178,8 +190,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                           ? "bg-muted text-primary"
                           : "text-muted-foreground"
                       } flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground  transition-all text-md duration-300 hover:text-primary `}
-                      to={item.path}
-                    >
+                      to={item.path}>
                       {item.icon}
                       {item.title}
                     </Link>
@@ -189,8 +200,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
               <Accordion
                 defaultValue={["item-1", "item-2", "item-3"]}
                 type="multiple"
-                className="w-full border-b "
-              >
+                className="w-full border-b ">
                 <AccordionItem className="px-3 py-2 border-b" value="item-1">
                   <AccordionTrigger className="font-md  text-[#71717A] hover:text-primary">
                     Recent
@@ -208,8 +218,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                       <DialogTrigger asChild>
                         <button
                           onClick={() => setImageSrc("")}
-                          className="flex gap-1  items-center mb-2 text-[#71717A] hover:text-primary cursor-pointer"
-                        >
+                          className="flex gap-1  items-center mb-2 text-[#71717A] hover:text-primary cursor-pointer">
                           <Plus className="w-4 h-4" /> Create a community
                         </button>
                       </DialogTrigger>
@@ -223,8 +232,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                         </DialogHeader>
                         <form
                           onSubmit={handleCreateCommunity}
-                          className="flex gap-4 items-center flex-col justify-center   py-4"
-                        >
+                          className="flex gap-4 items-center flex-col justify-center   py-4">
                           <div>
                             <Avatar className="h-20 w-20">
                               <AvatarImage
@@ -286,8 +294,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                                 imageUpload: e.target.files![0] as File,
                               }));
                             }}
-                            className=" flex bg-slate-50 border p-1 rounded-md  w-[90%] file:bg-primary file:text-white file:border-none file:p-1 file:px-3 file:text-sm file:rounded-md file:mr-5 file:py-2 file:hover:bg-primary/90  file:cursor-pointer"
-                          ></input>
+                            className=" flex bg-slate-50 border p-1 rounded-md  w-[90%] file:bg-primary file:text-white file:border-none file:p-1 file:px-3 file:text-sm file:rounded-md file:mr-5 file:py-2 file:hover:bg-primary/90  file:cursor-pointer"></input>
 
                           <DialogFooter>
                             <DialogPrimitive.Close>
@@ -307,9 +314,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                           )
                           .map((community) => (
                             <Link
-                              to={`/community/${community.id}`}
-                              key={community.id}
-                            >
+                              to={`communities/${community.slugs}`}
+                              key={community.id}>
                               {community.title}
                             </Link>
                           ))
@@ -328,8 +334,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                 <AccordionItem
                   data-state="open"
                   className="px-3 py-2 scale-1"
-                  value="item-3"
-                >
+                  value="item-3">
                   <AccordionTrigger className="font-md  text-[#71717A] hover:text-primary ">
                     Resources
                   </AccordionTrigger>
@@ -362,8 +367,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
               <Button
                 variant="outline"
                 size="icon"
-                className="shrink-0 md:hidden"
-              >
+                className="shrink-0 md:hidden">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
@@ -372,8 +376,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
               <nav className="grid gap-2  font-medium  right-1 pl-2  no-scrollbar  overflow-y-scroll ">
                 <Link
                   to="/"
-                  className="flex mt-[-1rem]  border-b  mb-4 items-center gap-2 text-lg font-semibold"
-                >
+                  className="flex mt-[-1rem]  border-b  mb-4 items-center gap-2 text-lg font-semibold">
                   <Logo></Logo>
                 </Link>
 
@@ -385,8 +388,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                         path.includes(item.path)
                           ? "bg-muted text-primary"
                           : "text-muted-foreground"
-                      } mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 transition-all  duration-300`}
-                    >
+                      } mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 transition-all  duration-300`}>
                       {item.icon}
                       {item.title}
                     </SheetClose>
@@ -396,8 +398,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                 <Accordion
                   defaultValue={["item-1", "item-2", "item-3"]}
                   type="multiple"
-                  className="w-full border-b "
-                >
+                  className="w-full border-b ">
                   <AccordionItem className="px-3 py-2 border-b" value="item-1">
                     <AccordionTrigger className="font-md  text-[#71717A] hover:text-primary">
                       Recent
@@ -415,8 +416,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                   <AccordionItem
                     data-state="open"
                     className="px-3 py-2 scale-1"
-                    value="item-3"
-                  >
+                    value="item-3">
                     <AccordionTrigger className="font-md  text-[#71717A] hover:text-primary">
                       Resources
                     </AccordionTrigger>

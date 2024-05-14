@@ -38,13 +38,13 @@ export const getAllCommunities = asyncHandler(async (req: Request, res: Response
 });
 
 /**
- * @desc gets a single community using id retrieved frrom url params
+ * @desc gets a single community using slugs retrieved from url params 
  * @route  GET /api/community/:id
  * @access Private
  */
 export const getCommunity = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const community = await Communities.findById(id);
+  const { slugs } = req.params;
+  const community = await Communities.findBySlugs(slugs);
   if (!community) {
     res.status(404);
     throw new Error("Community not found");
