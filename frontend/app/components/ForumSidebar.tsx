@@ -53,16 +53,23 @@ import { useAuth } from "../state/authStore";
 import { Description } from "@radix-ui/react-dialog";
 import LoadingOverlay from "./LoadingOverlay";
 import { useNavigate } from "react-router-dom";
+export interface Community {
+  id?: string;
+  userId: string;
+  title: string;
+  description: string;
+  img: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  slugs: string;
+}
 interface FormData {
   title: string;
   description: string;
   imageUpload: File | null;
 }
 
-interface Community {
-  title: string;
-  id: number;
-}
+
 
 export default function Sidebar({ children }: { children: ReactNode }) {
   const location = useLocation();
@@ -307,7 +314,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                           )
                           .map((community) => (
                             <Link
-                              to={`/community/${community.id}`}
+                              to={`communities/${community.slugs}`}
                               key={community.id}>
                               {community.title}
                             </Link>
