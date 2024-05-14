@@ -9,7 +9,8 @@ export async function up(knex: Knex): Promise<void> {
         title TEXT NOT NULL,
         img TEXT NOT NULL,
         description TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW()
+        created_at TIMESTAMP DEFAULT NOW(),
+        slugs TEXT NOT NULL
     )
   `);
 }
