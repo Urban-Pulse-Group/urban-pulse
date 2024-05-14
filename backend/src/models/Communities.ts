@@ -10,6 +10,7 @@ export interface Community {
   img: string;
   createdAt?: Date;
   updatedAt?: Date;
+  slugs?: string
 }
 
 export class Communities {
