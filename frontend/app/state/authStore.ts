@@ -24,8 +24,7 @@ export const useAuth = create<AuthState>((set, get) => ({
   getUser: async () => {
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/auth/getUser",
-        get().token
+        "http://localhost:4040/api/auth/getUser"
       );
       const data = await res.json();
       if (data?.user) {
@@ -49,7 +48,6 @@ export const useAuth = create<AuthState>((set, get) => ({
     try {
       const res = await authenticatedFetch(
         "http://localhost:4040/api/auth/logout",
-        get().token
       );
       const result = await res.json();
       console.log(result);
