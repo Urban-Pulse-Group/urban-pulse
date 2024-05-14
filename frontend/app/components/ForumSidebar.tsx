@@ -117,7 +117,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
     const url = await uploadImage();
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/community",
+        "http://localhost:4040/api/community",localStorage.get("token"),
         {
           method: "post",
           body: JSON.stringify({
@@ -145,7 +145,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
   const fetchRecentCommunities = async () => {
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/community",
+        "http://localhost:4040/api/community",localStorage.get("token")
       );
 
       const data = await res.json();
