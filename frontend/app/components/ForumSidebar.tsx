@@ -69,6 +69,8 @@ interface FormData {
   imageUpload: File | null;
 }
 
+
+
 export default function Sidebar({ children }: { children: ReactNode }) {
   const location = useLocation();
   const { token, user } = useAuth();
@@ -117,7 +119,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
     const url = await uploadImage();
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/community",localStorage.get("token"),
+        "http://localhost:4040/api/community",
+        token,
         {
           method: "post",
           body: JSON.stringify({
@@ -145,7 +148,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
   const fetchRecentCommunities = async () => {
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/community",localStorage.get("token")
+        "http://localhost:4040/api/community",
+        token
       );
 
       const data = await res.json();
