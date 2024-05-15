@@ -9,9 +9,9 @@ import { Posts } from "../models/Posts";
  * @access Private
  */
 export const createPosts = asyncHandler(async (req: Request, res: Response) => {
-    const { userId, title, content, communityId, slugs} = req.body;
+    const { userId, title, content, communityId, img} = req.body;
   
-    if (!userId || !title || !content || !communityId || slugs) {
+    if (!userId || !title || !content || !communityId) {
       res.status(400);
       throw new Error("Missing 1 or more required feilds");
     }

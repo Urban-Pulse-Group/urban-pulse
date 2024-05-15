@@ -6,6 +6,9 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-control-geocoder";
 import GeocoderControlComponent from "./GeocoderControl";
 import { PropagateLoader } from "react-spinners";
+import { FaPeopleGroup, FaMoneyBillTrendUp } from "react-icons/fa6";
+import { Separator } from "./Separator";
+import { RiNumbersFill } from "react-icons/ri";
 
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat("en-US", {
@@ -67,18 +70,99 @@ const LeafletMap: React.FC = () => {
   ) : (
     <div className="flex">
       {/* Sidebar */}
-      <div className="w-1/4 bg-gray-200 p-4 flex flex-col">
+      <div className="w-6/12 bg-gray-200 p-4 flex flex-col overflow-y-auto max-h-[calc(100vh-0rem)]">
         {/* Census Information */}
-        <h2 className="text-xl font-bold mb-4">Census Information</h2>
+        <h1 className="text-xl font-extrabold mb-4 text-[#71717A] ">
+          Census Information
+        </h1>
         {censusData ? (
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col">
-              <p>Median Income:</p>
-              <p>{formatCurrency(parseFloat(censusData.data[1][0]))}</p>
+          <div className="flex flex-col gap-5 mt-5">
+            <div className="flex items-center">
+              <div className="flex gap-10 flex-col">
+                <h1 className="font-extrabold text-gray-800 text-4xl ">
+                  Income and Poverty
+                </h1>
+
+                <div className="flex items-center ">
+                  <div className="flex flex-col gap-5">
+                    <div className="flex items-center">
+                      <FaMoneyBillTrendUp className="mr-1 " />
+                      <p className="font-bold text-xl">Income & Earnings </p>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatCurrency(parseFloat(censusData.data[1][0]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Median Household Income in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <p>Population:</p>
-              <p>{formatNumber(parseFloat(censusData.data[1][1]))}</p>
+            <Separator className="bg-red-700 mt-5" />
+            <div className="flex items-center">
+              <div className="flex gap-10 flex-col">
+                <h1 className="font-extrabold text-gray-800 text-4xl ">
+                  Populations and People
+                </h1>
+
+                <div className="flex items-center flex-col gap-8">
+                  <div className="flex flex-col gap-5">
+                    <div className="flex items-center">
+                      <FaPeopleGroup className="mr-1 " />
+                      <p className="font-bold text-xl">Population in Cities </p>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][1]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Total Population in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][2]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Total Male Population in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][3]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Total Female Population in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-5">
+                    <div className="flex items-center">
+                      <RiNumbersFill className="mr-1 " />
+                      <p className="font-bold text-xl">Age in Cities </p>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][4]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Median Age for Males in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][5]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Median Age for Females in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         ) : (

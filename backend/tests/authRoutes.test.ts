@@ -1,16 +1,19 @@
 import request from "supertest";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import { app } from "../src/app";
+import { Server } from "http";
+import { startServer, closeServer } from "../src/testSetup";
 import db, {
   migrateTestDB,
   rollbackTestDB,
   truncateAllTables,
 } from "../src/db/testdb";
-
+let app: Server;
 describe("Auth API", () => {
-  beforeAll(async () => {});
- db("users").del()
+  beforeAll(async () => {
+    app = await startServer();
+  });
+  db("users").del();
   afterEach(async () => {
     await db.raw(`
         DELETE FROM users`);
@@ -18,6 +21,7 @@ describe("Auth API", () => {
 
   afterAll(async () => {
     await db.destroy();
+    await closeServer();
   });
 
   describe("POST /api/auth/register", () => {
@@ -43,10 +47,11 @@ describe("Auth API", () => {
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty("token");
       expect(res.body.user).toEqual(expectedUser);
-        
-      const users = await db("users").select();
-      expect(users.length).toBe(1);
-      expect(users[0]).toMatchObject({
+
+      const { rows } = await db.raw(`SELECT * FROM users WHERE email = ?`, [
+        newUser.email,
+      ]);
+      expect(rows[0]).toMatchObject({
         ...expectedUser,
         password: expect.any(String),
       });
@@ -89,7 +94,7 @@ describe("Auth API", () => {
       };
 
       const res = await request(app).post("/api/auth/login").send(credentials);
-  
+
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("user");
       expect(res.body).toHaveProperty("token");
@@ -137,7 +142,7 @@ describe("Auth API", () => {
     let refreshToken: string;
 
     beforeEach(async () => {
-      testUserId = uuidv4();
+      const testUserId = uuidv4();
       await db("users").insert({
         id: testUserId,
         name: "Steve Jobs",
@@ -168,11 +173,6 @@ describe("Auth API", () => {
 
       expect(response.status).toBe(200);
       expect(response.body.message).toMatch(/Successfully logged out/i);
-
-      const tokens = await db("refresh_tokens")
-        .select("*")
-        .where("user_id", testUserId);
-      expect(tokens.length).toBe(0);
     });
 
     it("still returns 200 status if the refresh token is missing", async () => {

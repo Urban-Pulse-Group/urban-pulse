@@ -7,7 +7,9 @@ export default function ForumLayout() {
     <div>
       <Sidebar>
         <Outlet />
+        
       </Sidebar>
+
     </div>
   );
 }

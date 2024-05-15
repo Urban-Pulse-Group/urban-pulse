@@ -9,13 +9,19 @@ import { Communities } from "../models/Communities";
  * @access Private
  */
 export const createCommunity = asyncHandler(async (req, res) => {
-  const { userId, title, description, category } = req.body;
+  const { userId, title, description} = req.body;
 
-  if (!userId || !title || !description || !category) {
+  if (!userId || !title || !description) {
     res.status(400);
     throw new Error("Missing 1 or more of the required fields");
   }
-  const createdCommunity = await Communities.create(req.body);
+
+  const createdCommunity = await Communities.create(res, req.body);
+  if (!createCommunity) {
+    res.status(500);
+    throw new Error("Unable to create community");
+  }
+
   res.status(201).json({
     message: "Community created successfully",
     data: createdCommunity,
@@ -32,13 +38,13 @@ export const getAllCommunities = asyncHandler(async (req: Request, res: Response
 });
 
 /**
- * @desc gets a single community using id retrieved frrom url params
+ * @desc gets a single community using slugs retrieved from url params 
  * @route  GET /api/community/:id
  * @access Private
  */
 export const getCommunity = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const community = await Communities.findById(id);
+  const { slugs } = req.params;
+  const community = await Communities.findBySlugs(slugs);
   if (!community) {
     res.status(404);
     throw new Error("Community not found");

@@ -13,7 +13,7 @@ export const getCensusData = asyncHandler(
       throw new Error("Census API key is missing");
     }
     console.log("Received state and place:", state, place);
-    const url = `https://api.census.gov/data/2019/acs/acs5?get=B19013_001E,B01003_001E&for=place:${place}&in=state:${state}&key=${apiKey}`;
+    const url = `https://api.census.gov/data/2019/acs/acs5?get=B19013_001E,B01003_001E,B01001_002E,B01001_026E,B01002_002E,B01002_003E&for=place:${place}&in=state:${state}&key=${apiKey}`;
 
     const response = await fetch(url);
     if (!response.ok) {
