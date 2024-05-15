@@ -8,6 +8,7 @@ import GeocoderControlComponent from "./GeocoderControl";
 import { PropagateLoader } from "react-spinners";
 import { FaPeopleGroup, FaMoneyBillTrendUp } from "react-icons/fa6";
 import { Separator } from "./Separator";
+import { RiNumbersFill } from "react-icons/ri";
 
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat("en-US", {
@@ -140,7 +141,7 @@ const LeafletMap: React.FC = () => {
                   </div>
                   <div className="flex flex-col gap-5">
                     <div className="flex items-center">
-                      <FaPeopleGroup className="mr-1 " />
+                      <RiNumbersFill className="mr-1 " />
                       <p className="font-bold text-xl">Age in Cities </p>
                     </div>
                     <div className="">
