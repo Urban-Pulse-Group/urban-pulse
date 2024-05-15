@@ -116,6 +116,11 @@ export default function Sidebar({ children }: { children: ReactNode }) {
   const handleCreateCommunity = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setFormData({
+      title: "",
+      description: "",
+      imageUpload: null,
+    })
     const url = await uploadImage();
     try {
       const res = await authenticatedFetch(
@@ -136,7 +141,6 @@ export default function Sidebar({ children }: { children: ReactNode }) {
         ...recentCommunities,
         responseData.data,
       ]);
-      console.log(res);
     } catch (err) {
       console.log(err);
     }
@@ -153,9 +157,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
       );
 
       const data = await res.json();
-
       setRecentCommunities(data.data);
-      console.log(data);
     } catch (error) {
       console.error(error);
     }
@@ -217,7 +219,14 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                     <Dialog>
                       <DialogTrigger asChild>
                         <button
-                          onClick={() => setImageSrc("")}
+                          onClick={() => {
+                            setFormData({
+                              title: "",
+                              description: "",
+                              imageUpload: null,
+                            })
+                            setImageSrc("")
+                          }}
                           className="flex gap-1  items-center mb-2 text-[#71717A] hover:text-primary cursor-pointer">
                           <Plus className="w-4 h-4" /> Create a community
                         </button>
