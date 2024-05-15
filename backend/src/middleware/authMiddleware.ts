@@ -12,9 +12,12 @@ interface DecodedToken {
 
 export const protect = asyncHandler(
   async (req: ProtectedRequest, res: Response, next: NextFunction) => {
+ 
+  
     const refreshToken = req.cookies.refreshToken;
     console.log("refreshToken:", refreshToken);
     let accessToken: string | null = null;
+   try {
 
     if (
       req.headers.authorization &&
@@ -40,8 +43,10 @@ export const protect = asyncHandler(
       next();
       return;
     }
-
-    if (refreshToken) {
+    } catch (err) {
+     if (err instanceof jwt.TokenExpiredError) {
+      if (refreshToken) {
+      console.log("hi")
       const newAccessToken = await refreshAccessToken(refreshToken, res);
       const decoded = jwt.verify(
         newAccessToken,
@@ -52,16 +57,17 @@ export const protect = asyncHandler(
         res.status(401);
         throw new Error("Not authorized, user not found");
       }
-
-      RefreshTokens.delete(user.id as string, refreshToken);
-      await generateRefreshToken(res, user.id as string)
       req.user = user;
       req.token = accessToken as string;
       next();
       return;
     }
+      }
+      
     res.status(401);
     throw new Error("Not authorized, no tokens provided");
+
+  }
 
   }
 );
