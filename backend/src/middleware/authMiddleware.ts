@@ -57,8 +57,6 @@ export const protect = asyncHandler(
         res.status(401);
         throw new Error("Not authorized, user not found");
       }
-      RefreshTokens.delete(user.id as string, refreshToken);
-      await generateRefreshToken(res, user.id as string)
       req.user = user;
       req.token = accessToken as string;
       next();
