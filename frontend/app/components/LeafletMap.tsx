@@ -121,6 +121,22 @@ const LeafletMap: React.FC = () => {
                         Total Population in {searchedLocation}{" "}
                       </span>
                     </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][2]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Total Male Population in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][3]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Total Female Population in {searchedLocation}{" "}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
