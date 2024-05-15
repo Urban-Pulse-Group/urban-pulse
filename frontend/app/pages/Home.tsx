@@ -15,3 +15,5 @@ export default function Home() {
     </div>
   );
 }
+
+// https://dribbble.com/shots/20618426-Quickit-Figma-web-kit-for-Landings  for inspiration 
