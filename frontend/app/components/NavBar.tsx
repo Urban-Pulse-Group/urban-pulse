@@ -38,7 +38,8 @@ export default function NavBar() {
             return (
               <li
                 key={Math.floor(Math.random() * 23443243)}
-                className=" text-lg h-fit">
+                className=" text-lg h-fit"
+              >
                 <Link to={item.link}>{item.name}</Link>
               </li>
             );
