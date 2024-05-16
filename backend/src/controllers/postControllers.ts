@@ -36,14 +36,14 @@ export const createPosts = asyncHandler(async (req: Request, res: Response) => {
   });
   
   /**
-   * @desc gets a single post using id retrieved frrom url params
+   * @desc gets a single post using community id retrieved frrom url params
    * @route  GET /api/post/:id
    * @access Private
    */
-  export const getPost = asyncHandler(async (req: Request, res: Response) => {
+  export const getPostByCommunity = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const post = await Posts.findById(id);
+    const post = await Posts.findByCommunityId(id);
     if (!post) {
       res.status(404);
       throw new Error("Posts not found");
@@ -51,6 +51,24 @@ export const createPosts = asyncHandler(async (req: Request, res: Response) => {
     res.json({ data: post });
   });
   
+
+    /**
+   * @desc gets a single post using  post id retrieved frrom url params
+   * @route  GET /api/post/:id
+   * @access Private
+   */
+    export const getPostById = asyncHandler(async (req: Request, res: Response) => {
+      const { id } = req.params;
+  
+      const post = await Posts.findById(id);
+      if (!post) {
+        res.status(404);
+        throw new Error("Posts not found");
+      }
+      res.json({ data: post });
+    });
+    
+
   /**
    * @desc deletes a single Post using id retrieved frrom url params
    * @route   DELETE /api/post/:id

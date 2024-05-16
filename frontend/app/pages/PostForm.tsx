@@ -11,6 +11,7 @@ import { Tabs } from "../components/tabs";
 import LoadingOverlay from "../components/LoadingOverlay";
 import { storage } from "../firebase";
 import { v4 as uuid } from "uuid";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../state/authStore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 export default function PostForm() {
@@ -23,7 +24,7 @@ export default function PostForm() {
   const [loading, setLoading] = useState(false);
     const [render, setRender] = useState(0);
     const { user } = useAuth();
-
+    const navigate = useNavigate();
   const forceUpdate = () => {
     setRender((prev) => prev + 1);
   };
@@ -161,6 +162,7 @@ export default function PostForm() {
     });
       setFile(null);
       setImageSrc("");
+      navigate(`/forum/communities/${slugs}`)
     setLoading(false);
   };
 
@@ -267,9 +269,10 @@ export default function PostForm() {
   ];
 
   return (
-    <div className="flex flex-col items-center">
-          <div className="h-screen md:h-[40rem] [perspective:1000px] relative flex flex-col max-w-5xl mx-auto w-full items-start justify-start">
+      <div className="flex flex-col items-center">
           {loading && <LoadingOverlay />}
+          <div className="h-screen md:h-[40rem] [perspective:1000px] relative flex flex-col max-w-5xl mx-auto w-full items-start justify-start">
+          
         <div className="flex items-center gap-5">
           <h1 className="text-3xl">Create post</h1>
           <div className="flex items-center gap-2 bg-slate-100 w-fit p-1 px-4 rounded-full">
