@@ -46,7 +46,7 @@ export const createPosts = asyncHandler(async (req: Request, res: Response) => {
     const post = await Posts.findById(id);
     if (!post) {
       res.status(404);
-      throw new Error("Post not found");
+      throw new Error("Posts not found");
     }
     res.json({ data: post });
   });
@@ -69,3 +69,22 @@ export const createPosts = asyncHandler(async (req: Request, res: Response) => {
     });
   });
   
+/**
+ * @desc    Updates the likes of a single Post using id retrieved from URL params
+ * @route   PUT /api/post/:id/likes
+ * @access  Private
+ */
+export const putLikes = asyncHandler(async (req: Request, res: Response) => {
+    const {likes} = req.body;
+  const { id } = req.params;
+  if (typeof likes !== 'number' || likes < 0) {
+    res.status(400);
+    throw new Error('Invalid likes count');
+  }
+  const update = await Posts.updateLikes(id, likes);
+  res.json({
+    message: "successfully updated likes"
+  })
+
+
+  })

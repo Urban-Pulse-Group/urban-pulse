@@ -7,7 +7,7 @@ export interface Post {
   content: string;
   communityId: string;
   created_at?: Date;
-  img?: string
+  img?: string;
 }
 
 export class Posts {
@@ -15,7 +15,7 @@ export class Posts {
    *@desc Creates post with the values passed in
    */
   static async create(vals: Post): Promise<Post> {
-    const { userId, title, content, communityId, img} = vals;
+    const { userId, title, content, communityId, img } = vals;
     const slugs = slugify(title, {
       lower: true,
       strict: true,
@@ -23,11 +23,11 @@ export class Posts {
     });
     const { rows } = await db.raw(
       `
-          INSERT INTO posts ( user_id, title, content, community_id, slug, img)
-          VALUES (?, ?, ?, ?, ?, ?)
+          INSERT INTO posts ( user_id, title, content, community_id, slug, img, likes)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
           RETURNING *
         `,
-      [userId, title, content, communityId, slugs, !img ? "": img]
+      [userId, title, content, communityId, slugs, !img ? "" : img, 0]
     );
 
     return rows[0];
@@ -40,7 +40,7 @@ export class Posts {
     const { rows } = await db.raw(
       `SELECT posts.*, users.name FROM posts
        JOIN users ON posts.user_id = users.id
-        `,
+        `
     );
 
     return rows;
@@ -52,16 +52,21 @@ export class Posts {
    */
   static async findById(communityId: string): Promise<Post | null> {
     const { rows } = await db.raw(
-      `SELECT * FROM posts
-       WHERE id = ?
-        `,
+      `SELECT posts.*, users.username
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      WHERE posts.community_id = ?`,
       [communityId]
     );
     const communityExists = rows.length > 0;
     if (!communityExists) {
       return null;
     }
-    return rows[0];
+    return rows;
+  }
+
+  static async updateLikes(postId: string, newLikes: number) {
+    await db.raw("UPDATE posts SET likes = ? WHERE id = ?", [newLikes, postId]);
   }
 
   /**
