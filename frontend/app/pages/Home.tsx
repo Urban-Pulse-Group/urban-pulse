@@ -1,5 +1,7 @@
 // // https://dribbble.com/shots/20618426-Quickit-Figma-web-kit-for-Landings  for inspiration
 import React from "react";
+import AboutUs from "./AboutUs";
+import Mission from "./Mission";
 
 export default function Home() {
   return (
@@ -27,7 +29,7 @@ export default function Home() {
         <p className="text-lg" />
         {/* Moving can be a very difficult and tedious process. Our website aims */}
         <section className="text-center my-8">
-          <h2 className="text-2xl font-semibold mb-4">About Us</h2>
+          {/* <h2 className="text-2xl font-semibold mb-4">About Us</h2>
           <p className="text-lg">
             We are three software engineering fellows who are passionate about
             leveraging technology to empower communities. Our website was born
@@ -40,10 +42,12 @@ export default function Home() {
             positive impact, we can help individuals and families navigate the
             moving process with confidence and stay up to date with events and
             developments in their neighborhoods.
-          </p>
+          </p> */}
+          <AboutUs />
         </section>
         <section className="text-center my-8 mx-4 p-4 bg-white rounded-lg">
-          <h2 className="text-2xl font-semibold mb-4">Mission</h2>
+          <Mission />
+          {/* <h2 className="text-2xl font-semibold mb-4">Mission</h2>
           <p className="text-lg">
             Moving can be a very difficult and tedious process. Our website aims
             to make this process easier by providing specifics and valuable
@@ -53,7 +57,7 @@ export default function Home() {
             also offer a community forum. You can discuss anything from events
             to concerns to suggestions. We want to empower you with making
             informed decisions.
-          </p>
+          </p> */}
         </section>
       </section>
     </div>
