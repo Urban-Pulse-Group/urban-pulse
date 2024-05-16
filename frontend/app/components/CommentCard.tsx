@@ -23,8 +23,8 @@ export default function CommentCard({ comment }: { comment: Comment }) {
   const { user } = useAuth();
 
   useEffect(() => {
-    setUpvotes(comment?.likes!);
-    setOriginalVote(comment?.likes!);
+    setUpvotes(comment?.likes! ?? 0);
+    setOriginalVote(comment?.likes! ?? 0);
 
     const likedComments = localStorage.getItem("liked");
       const dislikedComments = localStorage.getItem("disliked");
@@ -137,7 +137,7 @@ export default function CommentCard({ comment }: { comment: Comment }) {
     <div>
       <div className="flex items-center gap-2">
         <Avatar className="w-8 h-8">
-          <AvatarImage src="" />
+          <AvatarImage src={""} />
           <AvatarFallback>{comment.username?.split("")[0]}</AvatarFallback>
         </Avatar>
 

@@ -226,7 +226,7 @@ export default function PostPage() {
   };
 
   return (
-    <div>
+    <div className="h-fit">
       {" "}
       <div
         className={`flex  lg:px-10 justify-center 
@@ -239,10 +239,10 @@ export default function PostPage() {
         </div>
         <div className="flex  ">
           <div
-            className=" flex   lg:px-10 
+            className=" flex overflow-y-scroll no-scrollbar  lg:px-10 
 
     md:mx-auto  flex-col  w-[80vw] md:w-[20rem] xl:w-[40rem] 2xl:w-[50rem] p-5">
-            <div className="flex">
+            <div className="flex ">
               <div className="">
                 {" "}
                 <div className="flex items-center gap-4">
@@ -329,6 +329,7 @@ export default function PostPage() {
               <CommentSection commentState={{ comments, setComments }} />
             </div>
           </div>{" "}
+
           <div className="hidden md:flex  w-72 h-screen 2xl:w-96  flex-col  bg-slate-50 rounded-md">
             <div className="border-b w-full flex flex-col items-center p-5">
               <div className="flex border-b pb-3 items-center justify-between mb-5 w-full">

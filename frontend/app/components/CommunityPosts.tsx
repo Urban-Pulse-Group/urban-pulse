@@ -51,7 +51,7 @@ export default function CommunityPosts({
   }, []);
 
   return (
-    <div className="overflow-scroll  no-scrollbar h-screen pb-20">
+    <div className="overflow-scroll  no-scrollbar h-screen pb-20 mr-5">
       {posts?.map((post) => {
         return <PostCard post={post} truncatedLength={truncatedLength} />;
       })}

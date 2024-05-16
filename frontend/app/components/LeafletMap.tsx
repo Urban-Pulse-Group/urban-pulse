@@ -8,6 +8,7 @@ import GeocoderControlComponent from "./GeocoderControl";
 import { PropagateLoader } from "react-spinners";
 import { FaPeopleGroup, FaMoneyBillTrendUp } from "react-icons/fa6";
 import { Separator } from "./Separator";
+import { RiNumbersFill } from "react-icons/ri";
 
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat("en-US", {
@@ -69,7 +70,7 @@ const LeafletMap: React.FC = () => {
   ) : (
     <div className="flex">
       {/* Sidebar */}
-      <div className="w-6/12 bg-gray-200 p-4 flex flex-col overflow-y-auto ">
+      <div className="w-6/12 bg-gray-200 p-4 flex flex-col overflow-y-auto max-h-[calc(100vh-0rem)]">
         {/* Census Information */}
         <h1 className="text-xl font-extrabold mb-4 text-[#71717A] ">
           Census Information
@@ -107,7 +108,7 @@ const LeafletMap: React.FC = () => {
                   Populations and People
                 </h1>
 
-                <div className="flex items-center ">
+                <div className="flex items-center flex-col gap-8">
                   <div className="flex flex-col gap-5">
                     <div className="flex items-center">
                       <FaPeopleGroup className="mr-1 " />
@@ -119,6 +120,44 @@ const LeafletMap: React.FC = () => {
                       </p>
                       <span className="text-sm text-gray-500">
                         Total Population in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][2]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Total Male Population in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][3]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Total Female Population in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-5">
+                    <div className="flex items-center">
+                      <RiNumbersFill className="mr-1 " />
+                      <p className="font-bold text-xl">Age in Cities </p>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][4]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Median Age for Males in {searchedLocation}{" "}
+                      </span>
+                    </div>
+                    <div className="">
+                      <p className="font-extrabold text-gray-800">
+                        {formatNumber(parseFloat(censusData.data[1][5]))}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        Median Age for Females in {searchedLocation}{" "}
                       </span>
                     </div>
                   </div>
