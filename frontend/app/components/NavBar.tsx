@@ -30,20 +30,21 @@ export default function NavBar() {
 
   return (
     <div>
-      <nav className="flex   p-1 px-10 items-center  justify-between">
-        <Logo />
+      <nav className="flex   p-3 px-10 items-center  justify-between">
+        <Logo className="" />
 
         <ul className="hidden md:flex w-fit px-14 items-center h-fit gap-10">
           {items.map((item) => {
             return (
               <li
                 key={Math.floor(Math.random() * 23443243)}
-                className=" text-lg h-fit"
+                className=" text-lg h-fit p-2"
               >
                 <Link to={item.link}>{item.name}</Link>
               </li>
             );
           })}
+
           {!isLoggedIn ? (
             <Link className="" to="/login">
               <li>

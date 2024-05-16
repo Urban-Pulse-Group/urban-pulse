@@ -10,23 +10,23 @@ export default function Home() {
       <h1 className="text-4xl font-bold mb-8">Welcome to Our Website!</h1>
 
       <section className="text-center my-8 mx-4 p-4 bg-white rounded-lg">
-        <nav>
-          {/* <ul>
+        {/* <nav>
+           <ul>
           <li>
             <a href="#about-us">About Us</a>
           </li>
           <li>
             <a href="#mission">Mission</a>
           </li>
-        </ul> */}
-        </nav>
+        </ul> 
+        </nav> */}
         {/* <section id="about-us" className="text-center my-8">
           <h2>About Us</h2>
           <p className="text-lg">...</p>
         </section> */}
-        <section id="mission" className="text-center my-8" />
+        {/* <section id="mission" className="text-center my-8" /> */}
         {/* <h2>Mission</h2> */}
-        <p className="text-lg" />
+        {/* <p className="text-lg" /> */}
         {/* Moving can be a very difficult and tedious process. Our website aims */}
         <section className="text-center my-8">
           {/* <h2 className="text-2xl font-semibold mb-4">About Us</h2>
