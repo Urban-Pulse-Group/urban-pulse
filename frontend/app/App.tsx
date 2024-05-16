@@ -15,6 +15,7 @@ import ForumPopular from "./pages/forum-pages/ForumPopular";
 import ForumAll from "./pages/forum-pages/ForumAll";
 import CommunityPage from "./pages/Community";
 import PostForm from "./pages/PostForm";
+import PostPage from "./pages/PostPage";
 export default function App() {
   const { getUser, setUser, setIsLoggedIn, isLoggedIn, user } = useAuth();
   console.log(isLoggedIn);
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="all" element={<ForumAll />} />
           <Route path="communities/:slugs" element={<CommunityPage />} />
           <Route path=":slugs/new-post" element={<PostForm />} />
+          <Route path="communities/:community/:id" element={<PostPage />} />
         </Route>
 
         <Route path="/login" element={<Login />} />

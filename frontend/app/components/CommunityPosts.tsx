@@ -7,6 +7,9 @@ import { MessageSquare } from "lucide-react";
 import { Share } from "lucide-react";
 import PostCard from "./PostCard";
 import DOMPurify from "dompurify";
+import { Dispatch, SetStateAction } from "react";
+import { Link } from "react-router-dom";
+import { Community } from "./ForumSidebar";
 export interface Post {
   id?: string;
   userId: string;
@@ -15,39 +18,18 @@ export interface Post {
   communityId: string;
   created_at?: string;
   img?: string;
-    username: string;
-    likes: number
+  username: string;
+  likes: number;
 }
 export default function CommunityPosts({
-  communityId,
+  postState,
 }: {
-  communityId: string;
+  postState: { posts: Post[]; setPosts: Dispatch<SetStateAction<undefined>> };
 }) {
-  const [posts, setPosts] = useState<Post[] | null>(null);
   const [truncatedLength, setTruncatedLength] = useState(100);
   const [upvotes, setUpvotes] = useState();
+  const { posts, setPosts } = postState;
 
-  useEffect(() => {
-    if (!communityId) {
-      return;
-    }
-    const fetchPosts = async () => {
-      try {
-        const res = await authenticatedFetch(
-          `http://localhost:4040/api/post/${communityId}`,
-          localStorage.getItem("token")
-        );
-
-        const data = await res.json();
-        console.log(data);
-        setPosts(data.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchPosts();
-  }, [communityId]);
-  console.log("post:", posts);
   useEffect(() => {
     const handleResize = () => {
       const screenWidth = window.innerWidth;
@@ -69,7 +51,7 @@ export default function CommunityPosts({
   }, []);
 
   return (
-    <div className="">
+    <div className="overflow-scroll  no-scrollbar h-screen pb-20 mr-5">
       {posts?.map((post) => {
         return <PostCard post={post} truncatedLength={truncatedLength} />;
       })}

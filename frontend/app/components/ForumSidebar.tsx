@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
-import { MoonLoader } from "react-spinners";
+
 import {
   Home,
   Menu,
@@ -18,7 +18,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./Accordion";
-import { toast } from "sonner";
+
 import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
 import { Textarea } from "./TextArea";
@@ -314,7 +314,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                       </DialogContent>
                     </Dialog>
 
-                    <div className="flex items-center ml-[-1rem] w-full justify-center flex-col">
+                    <div className="flex mt-6 w-full gap-3 flex-col">
                       {recentCommunities.length > 0 ? (
                         recentCommunities
                           .slice(
@@ -322,9 +322,15 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                             showAllCommunities ? recentCommunities.length : 7
                           )
                           .map((community) => (
+                            
                             <Link
+                              className="flex items-center gap-2"
                               to={`communities/${community.slugs}`}
                               key={community.id}>
+                              <Avatar className="w-[32px] h-[32px]" >
+                                <AvatarImage src={community.img} />
+                                <AvatarFallback>{community.title.split("")[0].toUpperCase() }</AvatarFallback>
+                              </Avatar>
                               {community.title}
                             </Link>
                           ))

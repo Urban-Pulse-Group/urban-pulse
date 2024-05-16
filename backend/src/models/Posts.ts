@@ -50,7 +50,7 @@ export class Posts {
    * @desc Gets the Post that correlates to the ID passed in
    * @returns The Post with the given ID if found, null if not
    */
-  static async findById(communityId: string): Promise<Post | null> {
+  static async findByCommunityId(communityId: string): Promise<Post | null> {
     const { rows } = await db.raw(
       `SELECT posts.*, users.username
       FROM posts
@@ -63,6 +63,21 @@ export class Posts {
       return null;
     }
     return rows;
+  }
+
+  static async findById(id: string): Promise<Post | null> {
+    const { rows } = await db.raw(
+      `SELECT posts.*, users.username
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      WHERE posts.id = ?`,
+      [id]
+    );
+    const communityExists = rows.length > 0;
+    if (!communityExists) {
+      return null;
+    }
+    return rows[0];
   }
 
   static async updateLikes(postId: string, newLikes: number) {

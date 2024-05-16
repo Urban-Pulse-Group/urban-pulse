@@ -1,14 +1,20 @@
 import express, { Router } from "express";
 import { protect } from "../middleware/authMiddleware";
-import { createPosts, getAllPosts, getPost, deletePost, putLikes } from "../controllers/postControllers";
+import {
+  createPosts,
+  getAllPosts,
+  getPostById,
+  deletePost,
+  putLikes,
+  getPostByCommunity,
+} from "../controllers/postControllers";
 
+export const postRouter: Router = express.Router();
 
-
-export const communityRouter: Router= express.Router();
-
-communityRouter.post("/",protect,createPosts);
-communityRouter.get("/", protect, getAllPosts);
-communityRouter.get("/:id", protect, getPost );
-communityRouter.delete("/:id", protect, deletePost);
-communityRouter.put("/:id/likes", protect, putLikes)
-export default communityRouter;
+postRouter.post("/", protect, createPosts);
+postRouter.get("/", protect, getAllPosts);
+postRouter.get("/:id", protect, getPostByCommunity);
+postRouter.delete("/:id", protect, deletePost);
+postRouter.put("/:id/likes", protect, putLikes);
+postRouter.get("/byId/:id", protect, getPostById);
+export default postRouter;
