@@ -11,6 +11,9 @@ module.exports = {
   prefix: "",
   theme: {
     extend: {
+      screens: {
+        "custom-lg": "1280px",
+      },
       fontFamily: {
         sans: ['Lexend', 'sans-serif'],
       }

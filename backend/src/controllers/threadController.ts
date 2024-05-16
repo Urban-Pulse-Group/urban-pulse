@@ -36,7 +36,7 @@ export const createThread = asyncHandler(
  * @access Private
  */
 export const getThreadsOfPost = asyncHandler(async (req: Request, res: Response) => {
-  const { postId } = req.body;
+  const { postId } = req.params;
   const threads = await Threads.findByPost(postId);
   if (!threads) {
     res.status(404);
@@ -78,3 +78,24 @@ export const deleteThread = asyncHandler(async (req: Request, res: Response) => 
     data: deletedThread,
   });
 });
+
+
+/**
+ * @desc    Updates the likes of a single comment using id retrieved from URL params
+ * @route   PUT /api/thread/:id/likes
+ * @access  Private
+ */
+export const putLikes = asyncHandler(async (req: Request, res: Response) => {
+  const {likes} = req.body;
+const { id } = req.params;
+if (typeof likes !== 'number' || likes < 0) {
+  res.status(400);
+  throw new Error('Invalid likes count');
+}
+const update = await Threads.updateLikes(id, likes);
+res.json({
+  message: "successfully updated likes"
+})
+
+
+})
