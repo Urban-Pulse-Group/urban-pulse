@@ -79,17 +79,39 @@ export default function NavBar() {
   );
 }
 
+// const items: NavbarItem[] = [
+//   {
+//     link: "/",
+//     name: "Home",
+//   },
+//   {
+//     link: "/about",
+//     name: "About us",
+//   },
+//   {
+//     link: "/mission",
+//     name: "Mission",
+//   },
+//   {
+//     link: "/map",
+//     name: "Map",
+//   },
+//   {
+//     link: "/forum",
+//     name: "Communities",
+//   },
+// ];
 const items: NavbarItem[] = [
   {
     link: "/",
     name: "Home",
   },
   {
-    link: "/about",
+    link: "/#about-us",
     name: "About us",
   },
   {
-    link: "/mission",
+    link: "/#mission",
     name: "Mission",
   },
   {
