@@ -6,7 +6,6 @@ import {
   Menu,
   Search,
   CircleArrowOutUpRight,
-  ScrollText,
   Info,
   CircleHelp,
   Map,
@@ -19,7 +18,7 @@ import {
   AccordionTrigger,
 } from "./Accordion";
 
-import React, { useState } from "react";
+import React, { useState, ReactNode, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
 import { Textarea } from "./TextArea";
 import { Button } from "./Button";
@@ -43,16 +42,15 @@ import {
 } from "./DropdownMenu";
 import { Input } from "./Input";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./Sheet";
-import { ReactNode, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuid } from "uuid";
 import { authenticatedFetch } from "../utils/fetchUtils";
 import { useAuth } from "../state/authStore";
-import { Description } from "@radix-ui/react-dialog";
 import LoadingOverlay from "./LoadingOverlay";
 import { useNavigate } from "react-router-dom";
+
 export interface Community {
   id?: string;
   userId: string;
@@ -63,20 +61,24 @@ export interface Community {
   updatedAt?: Date;
   slugs: string;
 }
+
 interface FormData {
   title: string;
   description: string;
   imageUpload: File | null;
 }
 
-
-
 export default function Sidebar({ children }: { children: ReactNode }) {
   const location = useLocation();
-  const { token, user } = useAuth();
+  const {
+    token,
+    user,
+    getUserCommunities,
+    joinedCommunities,
+    setJoinedCommunities,
+  } = useAuth();
   const [imageSrc, setImageSrc] = useState<string>("");
   const [fileError, setFileError] = useState<string>("");
-  const [recentCommunities, setRecentCommunities] = useState<Community[]>([]);
   const [showAllCommunities, setShowAllCommunities] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [communityNameInitial, setCommunityNameInitial] = useState<string>("");
@@ -87,7 +89,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
   });
   const navigate = useNavigate();
   const path = location.pathname;
-  console.log("user", user);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFileError("");
     const file = e.target.files ? e.target.files[0] : null;
@@ -99,18 +101,18 @@ export default function Sidebar({ children }: { children: ReactNode }) {
       reader.readAsDataURL(file);
     } else {
       setImageSrc("");
-      setFileError("unsupported file type");
+      setFileError("Unsupported file type");
     }
   };
+
   const uploadImage = async () => {
     if (formData.imageUpload === null) return null;
     const imageRef = ref(
       storage,
       `images/${formData.imageUpload.name + uuid()}`
     );
-    const res = await uploadBytes(imageRef, formData.imageUpload);
-    const url = await getDownloadURL(imageRef);
-    return url;
+    await uploadBytes(imageRef, formData.imageUpload);
+    return getDownloadURL(imageRef);
   };
 
   const handleCreateCommunity = async (e: React.FormEvent) => {
@@ -120,14 +122,14 @@ export default function Sidebar({ children }: { children: ReactNode }) {
       title: "",
       description: "",
       imageUpload: null,
-    })
+    });
     const url = await uploadImage();
     try {
       const res = await authenticatedFetch(
         "http://localhost:4040/api/community",
         token,
         {
-          method: "post",
+          method: "POST",
           body: JSON.stringify({
             title: formData.title,
             description: formData.description,
@@ -137,81 +139,65 @@ export default function Sidebar({ children }: { children: ReactNode }) {
         }
       );
       const responseData = await res.json();
-      setRecentCommunities((recentCommunities) => [
-        ...recentCommunities,
-        responseData.data,
-      ]);
+      setJoinedCommunities([...joinedCommunities, responseData.data]);
     } catch (err) {
       console.log(err);
     }
     setLoading(false);
   };
-  const handleMobileNavigate = (src: string) => {
-    navigate(src);
-  };
-  const fetchRecentCommunities = async () => {
-    try {
-      const res = await authenticatedFetch(
-        "http://localhost:4040/api/community",
-        token
-      );
 
-      const data = await res.json();
-      setRecentCommunities(data.data);
-    } catch (error) {
-      console.error(error);
-    }
+  const handleNav = (community: Community) => {
+    navigate(`communities/${community.slugs}`);
   };
-
-  useEffect(() => {
-    fetchRecentCommunities();
-  }, []);
 
   const handleShowMoreCommunities = () => {
     setShowAllCommunities(true);
   };
+  useEffect(() => {
+    if (!user) return;
+    getUserCommunities();
+  }, [user]);
 
   return (
-    <div className="grid min-h-screen  fixed w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ">
-      <div className="hidden border-r  bg-muted/40 md:block">
-        <div className="flex  h-full max-h-screen flex-col gap-2">
-          <div className="flex border-r-0  h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link to="/" className="flex ml-[-3rem]  gap-2 font-semibold">
-              <Logo></Logo>
+    <div className="grid min-h-screen fixed w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      <div className="hidden border-r bg-muted/40 md:block">
+        <div className="flex h-full max-h-screen flex-col gap-2">
+          <div className="flex border-r-0 h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+            <Link to="/" className="flex ml-[-3rem] gap-2 font-semibold">
+              <Logo />
             </Link>
           </div>
           {loading && <LoadingOverlay />}
-          <div className="flex-1  h-full ">
-            <nav className="grid items-start px-2 transition-all text-sm font-medium lg:px-4">
+          <div className="flex-1 h-full">
+            <nav className="items-start px-2 transition-all text-sm font-medium lg:px-4 xl:grid">
               <div className="border-b pb-3">
-                {items.map((item) => {
-                  return (
-                    <Link
-                      className={`${
-                        path.includes(item.path)
-                          ? "bg-muted text-primary"
-                          : "text-muted-foreground"
-                      } flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground  transition-all text-md duration-300 hover:text-primary `}
-                      to={item.path}>
-                      {item.icon}
-                      {item.title}
-                    </Link>
-                  );
-                })}{" "}
+                {items.map((item) => (
+                  <Link
+                    key={item.path}
+                    className={`${
+                      path.includes(item.path)
+                        ? "bg-muted text-primary"
+                        : "text-muted-foreground"
+                    } flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all text-md duration-300 hover:text-primary`}
+                    to={item.path}>
+                    {item.icon}
+                    {item.title}
+                  </Link>
+                ))}
               </div>
               <Accordion
                 defaultValue={["item-1", "item-2", "item-3"]}
                 type="multiple"
-                className="w-full border-b ">
+                className="w-full border-b">
                 <AccordionItem className="px-3 py-2 border-b" value="item-1">
-                  <AccordionTrigger className="font-md  text-[#71717A] hover:text-primary">
+                  <AccordionTrigger className="font-md text-[#71717A] hover:text-primary">
                     Recent
                   </AccordionTrigger>
                   <AccordionContent>None so far</AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem className="px-3 py-2 border-b" value="item-2">
-                  <AccordionTrigger className="font-md    text-[#71717A] hover:text-primary">
+                  <AccordionTrigger className="font-md text-[#71717A] hover:text-primary">
                     Communities
                   </AccordionTrigger>
 
@@ -224,14 +210,14 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                               title: "",
                               description: "",
                               imageUpload: null,
-                            })
-                            setImageSrc("")
+                            });
+                            setImageSrc("");
                           }}
-                          className="flex gap-1  items-center mb-2 text-[#71717A] hover:text-primary cursor-pointer">
+                          className="flex gap-1 items-center mb-2 text-[#71717A] hover:text-primary cursor-pointer">
                           <Plus className="w-4 h-4" /> Create a community
                         </button>
                       </DialogTrigger>
-                      <DialogContent className=" flex flex-col items-center w-[80vw] rounded-md  sm:max-w-[425px]">
+                      <DialogContent className="flex flex-col items-center w-[80vw] rounded-md sm:max-w-[425px]">
                         <DialogHeader>
                           <DialogTitle>Create a community</DialogTitle>
                           <DialogDescription>
@@ -241,20 +227,19 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                         </DialogHeader>
                         <form
                           onSubmit={handleCreateCommunity}
-                          className="flex gap-4 items-center flex-col justify-center   py-4">
+                          className="flex gap-4 items-center flex-col justify-center py-4">
                           <div>
                             <Avatar className="h-20 w-20">
                               <AvatarImage
                                 src={imageSrc}
                                 alt="uploaded picture"
                               />
-
                               <AvatarFallback>
                                 {communityNameInitial || "?"}
                               </AvatarFallback>
                             </Avatar>
                           </div>
-                          <div className="flex  w-[60vw] sm:w-96 items-center justify-center gap-4">
+                          <div className="flex w-[60vw] sm:w-96 items-center justify-center gap-4">
                             <Input
                               id="title"
                               placeholder="Title"
@@ -303,7 +288,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                                 imageUpload: e.target.files![0] as File,
                               }));
                             }}
-                            className=" flex bg-slate-50 border p-1 rounded-md  w-[90%] file:bg-primary file:text-white file:border-none file:p-1 file:px-3 file:text-sm file:rounded-md file:mr-5 file:py-2 file:hover:bg-primary/90  file:cursor-pointer"></input>
+                            className="flex bg-slate-50 border p-1 rounded-md w-[90%] file:bg-primary file:text-white file:border-none file:p-1 file:px-3 file:text-sm file:rounded-md file:mr-5 file:py-2 file:hover:bg-primary/90 file:cursor-pointer"></input>
 
                           <DialogFooter>
                             <DialogPrimitive.Close>
@@ -315,21 +300,22 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                     </Dialog>
 
                     <div className="flex mt-6 w-full gap-3 flex-col">
-                      {recentCommunities.length > 0 ? (
-                        recentCommunities
+                      {joinedCommunities.length > 0 ? (
+                        joinedCommunities
                           .slice(
                             0,
-                            showAllCommunities ? recentCommunities.length : 7
+                            showAllCommunities ? joinedCommunities.length : 7
                           )
                           .map((community) => (
-                            
                             <Link
                               className="flex items-center gap-2"
                               to={`communities/${community.slugs}`}
                               key={community.id}>
-                              <Avatar className="w-[32px] h-[32px]" >
+                              <Avatar className="w-[32px] h-[32px]">
                                 <AvatarImage src={community.img} />
-                                <AvatarFallback>{community.title.split("")[0].toUpperCase() }</AvatarFallback>
+                                <AvatarFallback>
+                                  {community.title.split("")[0].toUpperCase()}
+                                </AvatarFallback>
                               </Avatar>
                               {community.title}
                             </Link>
@@ -337,7 +323,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                       ) : (
                         <div>None so far</div>
                       )}
-                      {recentCommunities.length > 7 && !showAllCommunities && (
+                      {joinedCommunities.length > 7 && !showAllCommunities && (
                         <button onClick={handleShowMoreCommunities}>
                           Show More
                         </button>
@@ -350,16 +336,16 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                   data-state="open"
                   className="px-3 py-2 scale-1"
                   value="item-3">
-                  <AccordionTrigger className="font-md  text-[#71717A] hover:text-primary ">
+                  <AccordionTrigger className="font-md text-[#71717A] hover:text-primary">
                     Resources
                   </AccordionTrigger>
                   <AccordionContent>
                     <ul>
                       {resourceItems.map((item) => {
                         return (
-                          <li>
+                          <li key={item.path}>
                             <Link to={item.path}>
-                              <div className="flex items-center gap-3 rounded-lg px-3 py-2 tex-md text-muted-foreground  transition-all text-md duration-300 hover:text-primary">
+                              <div className="flex items-center gap-3 rounded-lg px-3 py-2 tex-md text-muted-foreground transition-all text-md duration-300 hover:text-primary">
                                 {item.icon}
                                 {item.title}
                               </div>
@@ -376,7 +362,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
         </div>
       </div>
       <div className="flex flex-col">
-        <header className="flex  h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -388,60 +374,195 @@ export default function Sidebar({ children }: { children: ReactNode }) {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
-              <nav className="grid gap-2  font-medium  right-1 pl-2  no-scrollbar  overflow-y-scroll ">
-                <Link
-                  to="/"
-                  className="flex mt-[-1rem]  border-b  mb-4 items-center gap-2 text-lg font-semibold">
-                  <Logo></Logo>
+              <div className="flex border-r-0 h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+                <Link to="/" className="flex gap-2 font-semibold">
+                  <Logo />
                 </Link>
-
-                {items.map((item) => {
-                  return (
-                    <SheetClose
-                      onClick={() => handleMobileNavigate(item.path)}
-                      className={`${
-                        path.includes(item.path)
-                          ? "bg-muted text-primary"
-                          : "text-muted-foreground"
-                      } mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 transition-all  duration-300`}>
-                      {item.icon}
-                      {item.title}
-                    </SheetClose>
-                  );
-                })}
-
+              </div>
+              <nav className="items-start overflow-y-scroll no-scrollbar px-2 transition-all text-sm font-medium lg:px-4 xl:grid">
+                <div className="border-b pb-3">
+                  {items.map((item) => {
+                    return (
+                      <Link
+                        key={item.path}
+                        className={`${
+                          path.includes(item.path)
+                            ? "bg-muted text-primary"
+                            : "text-muted-foreground"
+                        } flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all text-md duration-300 hover:text-primary`}
+                        to={item.path}>
+                        {item.icon}
+                        {item.title}
+                      </Link>
+                    );
+                  })}
+                </div>
                 <Accordion
                   defaultValue={["item-1", "item-2", "item-3"]}
                   type="multiple"
-                  className="w-full border-b ">
+                  className="w-full border-b">
                   <AccordionItem className="px-3 py-2 border-b" value="item-1">
-                    <AccordionTrigger className="font-md  text-[#71717A] hover:text-primary">
+                    <AccordionTrigger className="font-md text-[#71717A] hover:text-primary">
                       Recent
                     </AccordionTrigger>
                     <AccordionContent>None so far</AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem className="px-3 py-2 border-b" value="item-2">
-                    <AccordionTrigger className="font-md    text-[#71717A] hover:text-primary">
+                    <AccordionTrigger className="font-md text-[#71717A] hover:text-primary">
                       Communities
                     </AccordionTrigger>
-                    <AccordionContent>None so far</AccordionContent>
+
+                    <AccordionContent>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <button
+                            onClick={() => {
+                              setFormData({
+                                title: "",
+                                description: "",
+                                imageUpload: null,
+                              });
+                              setImageSrc("");
+                            }}
+                            className="flex gap-1 items-center mb-2 text-[#71717A] hover:text-primary cursor-pointer">
+                            <Plus className="w-4 h-4" /> Create a community
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="flex flex-col items-center w-[80vw] rounded-md sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Create a community</DialogTitle>
+                            <DialogDescription>
+                              Insert the required fields needed to make a
+                              community
+                            </DialogDescription>
+                          </DialogHeader>
+                          <form
+                            onSubmit={handleCreateCommunity}
+                            className="flex gap-4 items-center flex-col justify-center py-4">
+                            <div>
+                              <Avatar className="h-20 w-20">
+                                <AvatarImage
+                                  src={imageSrc}
+                                  alt="uploaded picture"
+                                />
+                                <AvatarFallback>
+                                  {communityNameInitial || "?"}
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
+                            <div className="flex w-[60vw] sm:w-96 items-center justify-center gap-4">
+                              <Input
+                                id="title"
+                                placeholder="Title"
+                                autoComplete="off"
+                                className="col-span-3"
+                                value={formData.title}
+                                onChange={(e) => {
+                                  setCommunityNameInitial(
+                                    e.target.value.length > 0
+                                      ? e.target.value
+                                          .split("")[0]
+                                          .toUpperCase()
+                                      : e.target.value.split("")[0]
+                                  );
+                                  setFormData((formData) => ({
+                                    ...formData,
+                                    title: e.target.value,
+                                  }));
+                                }}
+                                required
+                              />
+                            </div>
+                            <div className="flex items-center w-[60vw] sm:w-96 gap-4">
+                              <Textarea
+                                id="description"
+                                placeholder="Description"
+                                className="col-span-3"
+                                value={formData.description}
+                                onChange={(e) =>
+                                  setFormData((formData) => ({
+                                    ...formData,
+                                    description: e.target.value,
+                                  }))
+                                }
+                                required
+                              />
+                            </div>
+                            {fileError && (
+                              <p className="text-sm text-red-600">
+                                {fileError}
+                              </p>
+                            )}
+
+                            <input
+                              type="file"
+                              onChange={(e) => {
+                                handleFileChange(e);
+                                setFormData((formData) => ({
+                                  ...formData,
+                                  imageUpload: e.target.files![0] as File,
+                                }));
+                              }}
+                              className="flex bg-slate-50 border p-1 rounded-md w-[90%] file:bg-primary file:text-white file:border-none file:p-1 file:px-3 file:text-sm file:rounded-md file:mr-5 file:py-2 file:hover:bg-primary/90 file:cursor-pointer"></input>
+
+                            <DialogFooter>
+                              <DialogPrimitive.Close>
+                                <Button type="submit">Create Community</Button>
+                              </DialogPrimitive.Close>
+                            </DialogFooter>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+
+                      <div className="flex mt-6 w-full gap-3 flex-col">
+                        {joinedCommunities.length > 0 ? (
+                          joinedCommunities
+                            .slice(
+                              0,
+                              showAllCommunities ? joinedCommunities.length : 7
+                            )
+                            .map((community) => (
+                              <Link
+                                className="flex items-center gap-2"
+                                to={`communities/${community.slugs}`}
+                                key={community.id}>
+                                <Avatar className="w-[32px] h-[32px]">
+                                  <AvatarImage src={community.img} />
+                                  <AvatarFallback>
+                                    {community.title.split("")[0].toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                {community.title}
+                              </Link>
+                            ))
+                        ) : (
+                          <div>None so far</div>
+                        )}
+                        {joinedCommunities.length > 7 &&
+                          !showAllCommunities && (
+                            <button onClick={handleShowMoreCommunities}>
+                              Show More
+                            </button>
+                          )}
+                      </div>
+                    </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem
                     data-state="open"
                     className="px-3 py-2 scale-1"
                     value="item-3">
-                    <AccordionTrigger className="font-md  text-[#71717A] hover:text-primary">
+                    <AccordionTrigger className="font-md text-[#71717A] hover:text-primary">
                       Resources
                     </AccordionTrigger>
                     <AccordionContent>
                       <ul>
                         {resourceItems.map((item) => {
                           return (
-                            <li>
+                            <li key={item.path}>
                               <Link to={item.path}>
-                                <div className="flex items-center gap-3 rounded-lg px-3 py-2 tex-md text-muted-foreground  transition-all text-md duration-300 hover:text-primary">
+                                <div className="flex items-center gap-3 rounded-lg px-3 py-2 tex-md text-muted-foreground transition-all text-md duration-300 hover:text-primary">
                                   {item.icon}
                                   {item.title}
                                 </div>
@@ -487,7 +608,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        <main className="flex h-screen overflow-scroll  flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+        <main className="flex h-screen overflow-scroll flex-col gap-4 p-4 lg:gap-6 lg:p-6">
           {children}
         </main>
       </div>
@@ -506,11 +627,6 @@ const items = [
     icon: <CircleArrowOutUpRight className="h-4 w-4" />,
     path: "/forum/popular",
   },
-  {
-    title: "All",
-    icon: <ScrollText className="h-4 w-4" />,
-    path: "/forum/all",
-  },
 ];
 
 const resourceItems = [
@@ -525,7 +641,7 @@ const resourceItems = [
     path: "/map",
   },
   {
-    title: "help",
+    title: "Help",
     icon: <CircleHelp className="h-4 w-4" />,
     path: "/help",
   },

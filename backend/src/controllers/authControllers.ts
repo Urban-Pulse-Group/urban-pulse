@@ -2,13 +2,11 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import dotenv from "dotenv";
-import { Users} from "../models/User";
+import { Users } from "../models/User";
 
 import { generateAccessToken, generateRefreshToken } from "../utils/jwtHelpers";
 import { ProtectedRequest } from "../types/serverTypes";
 import { RefreshTokens } from "../models/RefreshTokens";
-
-
 
 dotenv.config({ path: "../.env" });
 
@@ -19,7 +17,7 @@ dotenv.config({ path: "../.env" });
  */
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {
-    const { name, username, email, password } = req.body;
+    const { name, username, email, password, img } = req.body;
 
     if (!name || !email || !password || !username) {
       res.status(400);
@@ -34,21 +32,22 @@ export const registerUser = asyncHandler(
     }
 
     const hashedPassword = await Users.hashPassword(password);
-    console.log(hashedPassword,"hashed shit")
+    console.log(hashedPassword, "hashed shit");
     const newUser = await Users.create({
       name,
       username,
       email,
       password: hashedPassword,
+      img: img,
     });
 
     if (newUser) {
       await generateRefreshToken(res, newUser.id!);
       const token = generateAccessToken(newUser.id!);
-      console.log("token:", token)
+      console.log("token:", token);
       delete newUser.password;
       res.status(201).json({
-        user: {...newUser},
+        user: { ...newUser },
         token,
       });
     } else {
@@ -72,13 +71,13 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const user = await Users.findByEmailOrUsername(emailOrUsername);
-  console.log(user)
+  console.log(user);
   if (user && (await Users.verifyPassword(password, user.password as string))) {
     await generateRefreshToken(res, user.id!);
     const token = generateAccessToken(user.id!);
-    delete user.password; 
+    delete user.password;
     res.json({
-      user: {...user},
+      user: { ...user },
       token,
     });
   } else {
@@ -122,7 +121,7 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   await RefreshTokens.delete(decoded.id, refreshToken);
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure:false ,
+    secure: false,
     sameSite: "lax",
   });
   res.json({ message: "Successfully logged out" });

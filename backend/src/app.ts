@@ -11,6 +11,7 @@ import postRouter from "./routes/postRoutes";
 import communityRouter from "./routes/communityRoutes";
 import threadRouter from "./routes/threadRoutes";
 import replyRouter from "./routes/replyRoutes";
+import membershipRouter from "./routes/membershipRoute";
 dotenv.config();
 
 export const app: Application = express();
@@ -29,7 +30,7 @@ app.use("/api/community", communityRouter);
 app.use("/api/post", postRouter);
 app.use("/api/thread", threadRouter)
 app.use("/api/reply", replyRouter)
-
+app.use("/api/membership", membershipRouter)
 app.use(errorHandler);
 const PORT: number | string = process.env.PORT ?? 4040;
 const server: Server = app.listen(4040, () =>

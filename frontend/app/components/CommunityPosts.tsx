@@ -24,10 +24,10 @@ export interface Post {
 export default function CommunityPosts({
   postState,
 }: {
-  postState: { posts: Post[]; setPosts: Dispatch<SetStateAction<undefined>> };
+  postState: { posts: Post[]; setPosts: Dispatch<SetStateAction<Post[]>> };
 }) {
   const [truncatedLength, setTruncatedLength] = useState(100);
-  const [upvotes, setUpvotes] = useState();
+
   const { posts, setPosts } = postState;
 
   useEffect(() => {

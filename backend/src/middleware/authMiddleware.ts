@@ -12,62 +12,57 @@ interface DecodedToken {
 
 export const protect = asyncHandler(
   async (req: ProtectedRequest, res: Response, next: NextFunction) => {
- 
-  
     const refreshToken = req.cookies.refreshToken;
     console.log("refreshToken:", refreshToken);
     let accessToken: string | null = null;
-   try {
-
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      accessToken = req.headers.authorization.split(" ")[1];
-    }
-
-    if (accessToken) {
-      const decoded = jwt.verify(
-        accessToken,
-        process.env.JWT_ACCESS_SECRET!
-      ) as DecodedToken;
-
-      const user = await Users.findById(decoded.id);
-      if (!user) {
-        res.status(401);
-        throw new Error("Not authorized, user not found");
+    try {
+      if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith("Bearer")
+      ) {
+        accessToken = req.headers.authorization.split(" ")[1];
       }
 
-      req.user = user;
-      req.token = accessToken;
-      next();
-      return;
-    }
+      if (accessToken) {
+        const decoded = jwt.verify(
+          accessToken,
+          process.env.JWT_ACCESS_SECRET!
+        ) as DecodedToken;
+
+        const user = await Users.findById(decoded.id);
+        if (!user) {
+          res.status(401);
+          throw new Error("Not authorized, user not found");
+        }
+
+        req.user = user;
+        req.token = accessToken;
+        next();
+        return;
+      }
     } catch (err) {
-     if (err instanceof jwt.TokenExpiredError) {
-      if (refreshToken) {
-      console.log("hi")
-      const newAccessToken = await refreshAccessToken(refreshToken, res);
-      const decoded = jwt.verify(
-        newAccessToken,
-        process.env.JWT_ACCESS_SECRET!
-      ) as DecodedToken;
-      const user = await Users.findById(decoded.id);
-      if (!user) {
-        res.status(401);
-        throw new Error("Not authorized, user not found");
+      if (err instanceof jwt.TokenExpiredError) {
+        if (refreshToken) {
+          console.log("hi");
+          const newAccessToken = await refreshAccessToken(refreshToken, res);
+          const decoded = jwt.verify(
+            newAccessToken,
+            process.env.JWT_ACCESS_SECRET!
+          ) as DecodedToken;
+          const user = await Users.findById(decoded.id);
+          if (!user) {
+            res.status(401);
+            throw new Error("Not authorized, user not found");
+          }
+          req.user = user;
+          req.token = accessToken as string;
+          next();
+          return;
+        }
       }
-      req.user = user;
-      req.token = accessToken as string;
-      next();
-      return;
+
+      res.status(401);
+      throw new Error("Not authorized, no tokens provided");
     }
-      }
-      
-    res.status(401);
-    throw new Error("Not authorized, no tokens provided");
-
-  }
-
   }
 );

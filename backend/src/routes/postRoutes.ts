@@ -7,6 +7,8 @@ import {
   deletePost,
   putLikes,
   getPostByCommunity,
+  getRandomPosts,
+  getMostPopularPosts,
 } from "../controllers/postControllers";
 
 export const postRouter: Router = express.Router();
@@ -17,4 +19,6 @@ postRouter.get("/:id", protect, getPostByCommunity);
 postRouter.delete("/:id", protect, deletePost);
 postRouter.put("/:id/likes", protect, putLikes);
 postRouter.get("/byId/:id", protect, getPostById);
+postRouter.get("/random/:limit", protect, getRandomPosts);
+postRouter.get("/popular/:limit", protect, getMostPopularPosts)
 export default postRouter;

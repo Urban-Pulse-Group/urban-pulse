@@ -1,5 +1,5 @@
-import db from '../db/db';
-import bcrypt from 'bcryptjs';
+import db from "../db/db";
+import bcrypt from "bcryptjs";
 
 export interface User {
   id?: string;
@@ -10,6 +10,7 @@ export interface User {
   roles?: string[];
   createdAt?: Date;
   updatedAt?: Date;
+  img?: string;
 }
 
 export class Users {
@@ -18,7 +19,9 @@ export class Users {
    * @param emailOrUsername - Email or Username
    * @returns User object or null
    */
-  static async findByEmailOrUsername(emailOrUsername: string): Promise<User | null> {
+  static async findByEmailOrUsername(
+    emailOrUsername: string
+  ): Promise<User | null> {
     const { rows } = await db.raw(
       `
       SELECT * FROM users
@@ -72,16 +75,16 @@ export class Users {
    * @param user - User data excluding the ID
    * @returns The created user or null
    */
-  static async create(user: Omit<User, 'id'>): Promise<User | null> {
-    const { name, username, email, password } = user;
-
+  static async create(user: Omit<User, "id">): Promise<User | null> {
+    const { name, username, email, password, img } = user;
+    console.log("imggg:", img)
     const { rows } = await db.raw(
       `
-      INSERT INTO users (name, username, email, password)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO users (name, username, email, password, img)
+      VALUES (?, ?, ?, ?, ?)
       RETURNING id, name, username, email, roles, created_at
       `,
-      [name, username, email, password]
+      [name, username, email, password, img]
     );
 
     return rows.length > 0 ? (rows[0] as User) : null;
@@ -93,10 +96,13 @@ export class Users {
    * @param hashedPassword - Hashed password from the database
    * @returns True if passwords match, otherwise false
    */
-  static async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+  static async verifyPassword(
+    password: string,
+    hashedPassword: string
+  ): Promise<boolean> {
     const correct = await bcrypt.compare(password, hashedPassword);
-    console.log("correct:", correct)
-    return  correct
+    console.log("correct:", correct);
+    return correct;
   }
 
   /**
@@ -105,8 +111,6 @@ export class Users {
    * @returns Hashed password
    */
   static async hashPassword(password: string): Promise<string> {
-
     return await bcrypt.hash(password, 10);
   }
 }
-

@@ -10,20 +10,20 @@ import Signup from "./pages/Signup";
 import { useAuth } from "./state/authStore";
 import HomeLayout from "./layouts/HomeLayout";
 import AboutUs from "./pages/AboutUs";
-import ForumHome from "./pages/forum-pages/Forum";
-import ForumPopular from "./pages/forum-pages/ForumPopular";
-import ForumAll from "./pages/forum-pages/ForumAll";
+import ForumHome from "./pages/ForumHome";
+import ForumPopular from "./pages/ForumPopular";
+import ForumAll from "./pages/ForumAll";
 import CommunityPage from "./pages/Community";
 import PostForm from "./pages/PostForm";
 import PostPage from "./pages/PostPage";
 export default function App() {
   const { getUser, setUser, setIsLoggedIn, isLoggedIn, user } = useAuth();
-  console.log(isLoggedIn);
+
 
   useEffect(() => {
     const fetchUser = async () => {
       const user = await getUser();
-      console.log("failed:L", user);
+    
       if (user) {
         setUser(user);
         setIsLoggedIn(true);
@@ -31,7 +31,7 @@ export default function App() {
     };
     fetchUser();
   }, [isLoggedIn]);
-  console.log(user);
+
   return (
     <Router>
       <Routes>

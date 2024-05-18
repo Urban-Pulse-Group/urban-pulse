@@ -1,30 +1,46 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { Label } from "../components/label";
 import { useAuth } from "../state/authStore";
+import { storage } from "../firebase";
+import { v4 as uuid } from "uuid";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/Avatar";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 interface FormData {
   name: string;
   username: string;
   password: string;
   confirmPassword: string;
   email: string;
+  img: File | null;
 }
 
 export default function Signup() {
-  const {login} = useAuth()
+  const { login } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string>("");
+  const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     username: "",
     password: "",
     confirmPassword: "",
     email: "",
+    img: null,
   });
-  const navigate = useNavigate()
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
-
+  const uploadImage = async () => {
+    if (formData.img === null) return null;
+    const imageRef = ref(storage, `images/${formData.img.name + uuid()}`);
+    const res = await uploadBytes(imageRef, formData.img);
+    const url = await getDownloadURL(imageRef);
+    console.log("urlllllll:", url)
+    return url;
+  };
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
@@ -32,22 +48,46 @@ export default function Signup() {
       [id]: value,
     }));
   };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileError("");
+    const file = e.target.files ? e.target.files[0] : null;
+    
+    if (file && file.type.startsWith("image/")) {
+      setFormData((formData) => ({
+        ...formData,
+        img: file
+      }));
+      const reader: FileReader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        setImgSrc(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImgSrc(null);
+      setFileError("Unsupported file type");
+    }
+  };
+
+console.log(formData)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     console.log("Submitting form data:", formData);
 
     if (formData.password !== formData.confirmPassword) {
-      setErrorMessage("Passwords dont match")
+      setErrorMessage("Passwords don't match");
       return;
     }
 
     try {
-      const reqBody: Partial<FormData> = {
+      const url = await uploadImage() || "";
+    
+      const reqBody = {
         name: formData.name,
         username: formData.username,
         email: formData.email,
         password: formData.password,
+        img: url,
       };
 
       const res = await fetch("http://localhost:4040/api/auth/register", {
@@ -66,8 +106,8 @@ export default function Signup() {
       } else {
         const data = await res.json();
         console.log("Signup successful:", data);
-        login(data.token)
-        navigate("/")
+        login(data.token);
+        navigate("/");
         setErrorMessage(null);
         setFormData({
           name: "",
@@ -75,6 +115,7 @@ export default function Signup() {
           password: "",
           confirmPassword: "",
           email: "",
+          img: null,
         });
       }
     } catch (err) {
@@ -83,15 +124,38 @@ export default function Signup() {
     }
   };
 
+  const handleAvatarClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   return (
-    <div className="w-screen justify-center flex items-center h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="w-screen  justify-center flex items-center h-screen overflow-scroll sm:overflow-hidden lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
-        <form onSubmit={handleSubmit} className="mx-auto grid w-[350px] gap-6">
+        <form onSubmit={handleSubmit} className="mx-auto mt-10 sm:mt-0 grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Sign Up</h1>
             <p className="text-balance text-muted-foreground">
               Enter your credentials below to sign up
             </p>
+          </div>
+          <div className="w-full flex flex-col items-center">
+            <Avatar className="w-20 h-20 " onClick={handleAvatarClick}>
+              {imgSrc ? (
+                <AvatarImage className="" src={imgSrc} alt="Uploaded avatar" />
+              ) : (
+                <AvatarFallback>?</AvatarFallback>
+              )}
+            </Avatar>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+            {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
           </div>
           {errorMessage && (
             <div className="text-red-600 text-center">{errorMessage}</div>
@@ -148,16 +212,13 @@ export default function Signup() {
               <Input
                 id="confirmPassword"
                 type="password"
-               
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="Confirm Password"
                 required
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full">
+            <Button type="submit" className="w-full">
               Sign up
             </Button>
           </div>

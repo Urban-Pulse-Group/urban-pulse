@@ -4,4 +4,5 @@ export interface User {
   username: string;
   created_at: string;
   roles: string[] | null;
+  img: string
 }

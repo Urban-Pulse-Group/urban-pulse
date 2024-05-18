@@ -22,7 +22,7 @@ interface Props {
 export default function CommentSection({ commentState }: Props) {
   const { comments, setComments } = commentState;
   return (
-    <div className="mt-10 h-full no-scrollbar overflow-y-scroll">
+    <div className="mt-10  mb-20  no-scrollbar overflow-y-scroll">
       {comments?.map((comment) => {
         return (
          <CommentCard comment={comment} />
