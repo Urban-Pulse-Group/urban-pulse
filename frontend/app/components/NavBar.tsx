@@ -30,7 +30,7 @@ export default function NavBar() {
 
   return (
     <div>
-      <nav className="flex   p-3 px-10 items-center  justify-between">
+      <nav className="flex border-b   p-1 px-10 items-center  justify-between">
         <Logo className="" />
 
         <ul className="hidden md:flex w-fit px-14 items-center h-fit gap-10">
@@ -55,7 +55,8 @@ export default function NavBar() {
             <li className="cursor-pointer">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="w-10 h-10">
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage src={user?.img} />
                     <AvatarFallback>{user?.name.split("")[0]}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>

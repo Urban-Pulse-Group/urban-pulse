@@ -11,4 +11,5 @@ threadRouter.get("/singleThread/:id", protect, getThread);
 threadRouter.get("/:postId", protect, getThreadsOfPost );
 threadRouter.delete("/:id", protect, deleteThread);
 threadRouter.put("/:id/likes", protect, putLikes);
+
 export default threadRouter;

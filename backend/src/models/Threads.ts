@@ -16,9 +16,17 @@ export class Threads {
     const { userId, content, postId } = vals;
     const { rows } = await db.raw(
       `
-          INSERT INTO threads ( user_id, content, post_id)
-          VALUES (?, ?, ?)
-          RETURNING *
+      WITH inserted_thread AS (
+        INSERT INTO threads (user_id, content, post_id)
+        VALUES (?, ?, ?)
+        RETURNING *
+      )
+      SELECT 
+        inserted_thread.*, 
+        users.username AS user_username, 
+        users.img AS user_img
+      FROM inserted_thread
+      JOIN users ON inserted_thread.user_id = users.id;
         `,
       [userId, content, postId]
     );
@@ -30,13 +38,13 @@ export class Threads {
    * @desc Gets the threads that correlates to the Post id passed in
    * @returns The threads that relates to the given Post id, null if not
    */
-  static async findByPost(PostId: string): Promise<Thread | null> {
+  static async findByPost(threadId: string): Promise<Thread | null> {
     const { rows } = await db.raw(
-      `SELECT threads.*, users.username
+      `SELECT threads.*, users.username AS user_username, users.img AS user_img
       FROM threads
       JOIN users ON threads.user_id = users.id
       WHERE threads.post_id = ?`,
-      [PostId]
+      [threadId]
     );
     const threadExists = rows.length > 0;
     if (!threadExists) {

@@ -5,8 +5,8 @@ import Mission from "./Mission";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center bg-sandybrown">
-      <nav className="bg-white w-full border-b ">{/* Navbar content */}</nav>
+    <div className="min-h-screen  mt-10 flex flex-col items-center bg-sandybrown">
+      <nav className="bg-white w-full  ">{/* Navbar content */}</nav>
       <h1 className="text-4xl font-bold mb-8">Welcome to Our Website!</h1>
 
       <section className="text-center my-8 mx-4 p-4 bg-white rounded-lg">

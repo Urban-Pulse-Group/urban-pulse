@@ -32,16 +32,17 @@ export class Replies {
    */
   static async findByThread(threadId: string): Promise<Reply| null> {
     const { rows } = await db.raw(
-      `SELECT * FROM replies
-       WHERE thread_id = ?
-        `,
+     ` SELECT replies.*, users.username
+      FROM replies
+      JOIN users ON replies.user_id = users.id
+      WHERE thread_id = ?`,
       [threadId]
     );
     const replyExists = rows.length > 0;
     if (!replyExists) {
       return null;
     }
-    return rows[0];
+    return rows;
   }
 
     /**
@@ -82,4 +83,8 @@ export class Replies {
 
     return rows[0];
   }
+  static async updateLikes(commentId: string, newLikes: number) {
+    await db.raw("UPDATE replies SET likes = ? WHERE id = ?", [newLikes, commentId]);
+  }
+
 }

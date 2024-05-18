@@ -101,4 +101,54 @@ export class Posts {
 
     return rows[0];
   }
+
+  /**
+   * @desc Gets random Posts from the database
+   * @param limit Number of random posts to fetch
+   * @returns An array of random Posts
+   */
+  static async getRandomPosts(limit: number = 10): Promise<Post[]> {
+    const { rows } = await db.raw(
+      `
+      SELECT posts.*, 
+             users.username, 
+             communities.title as community_title, 
+             communities.img as community_img,
+             communities.slugs as community_slugs
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      JOIN communities ON posts.community_id = communities.id
+      ORDER BY RANDOM()
+      LIMIT ?
+      `,
+      [limit]
+    );
+
+    return rows;
+  }
+
+  /**
+   * @desc Gets the most popular posts by number of likes
+   * @param limit Number of posts to fetch
+   * @returns An array of the most popular Posts
+   */
+  static async getMostPopularPosts(limit: number = 10): Promise<Post[]> {
+    const { rows } = await db.raw(
+      `
+      SELECT posts.*, 
+             users.username, 
+             communities.title as community_title, 
+             communities.img as community_img,
+             communities.slugs as community_slugs
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      JOIN communities ON posts.community_id = communities.id
+      ORDER BY posts.likes DESC
+      LIMIT ?
+      `,
+      [limit]
+    );
+
+    return rows;
+  }
 }

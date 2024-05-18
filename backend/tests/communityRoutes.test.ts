@@ -9,14 +9,14 @@ import { start } from "repl";
 import { Server } from "http";
 describe("Community API", () => {
   let user: User | null;
-  let app: Server
+  let app: Server;
 
   const setUser = (newUser: User) => (user = newUser);
   beforeAll(async () => {
-    app = await startServer()
+    app = await startServer();
 
     db("users").del();
-     user = await Users.create({
+    user = await Users.create({
       username: "testing",
       password: "testing",
       name: "testing",
@@ -41,7 +41,7 @@ describe("Community API", () => {
         user_id: user?.id,
         title: "nyc",
         description: " nyc community",
-          img: "",
+        img: "",
         created_at: expect.anything(),
       };
 
@@ -80,21 +80,21 @@ describe("Community API", () => {
         title: "Gardening Enthusiasts",
         description:
           "A community for people who enjoy gardening and sharing tips about plants.",
-          img: ""
+        img: "",
       },
       {
         user_id: id,
         title: "Tech Innovators",
         description:
           "A place to discuss the latest in tech, gadgets, and software development.",
-          img: ""
+        img: "",
       },
       {
         user_id: id,
         title: "Fitness Freaks",
         description:
           "Community dedicated to fitness enthusiasts who love to keep active and healthy.",
-          img: ""
+        img: "",
       },
     ];
     beforeAll(async () => {
@@ -118,15 +118,15 @@ describe("Community API", () => {
           user_id: string;
           title: string;
           description: string;
-          img: string;  
+          img: string;
           created_at?: Date;
         }) => ({
           user_id,
           title,
           description,
-          img, 
+          img,
         })
-    );
+      );
       expect(responseData).toEqual(communitiesData);
     });
   });

@@ -62,7 +62,7 @@ console.log("id:", id)
 });
 
 /**
- * @desc deletes a single Thread using id retrieved frrom url params
+ * @desc deletes a single Thread using id retrieved from url params
  * @route   DELETE /api/thread/:id
  * @access Private
  */
@@ -81,7 +81,7 @@ export const deleteThread = asyncHandler(async (req: Request, res: Response) => 
 
 
 /**
- * @desc    Updates the likes of a single comment using id retrieved from URL params
+ * @desc    Updates the likes of a single thread using id retrieved from URL params
  * @route   PUT /api/thread/:id/likes
  * @access  Private
  */

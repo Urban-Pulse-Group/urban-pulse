@@ -25,8 +25,9 @@ export interface Comment {
   postId: string;
   created_at?: Date;
   slugs: string;
-  username?: string;
-  likes?: number
+  user_username?: string;
+  likes?: number;
+  user_img: string
 }
 
 export default function PostPage() {
@@ -57,6 +58,10 @@ export default function PostPage() {
       console.log(err);
     }
   };
+  const sortedComments = (comments) => [...comments].sort((a: Comment, b: Comment) =>
+    new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+  );
+
 
   const getComments = async () => {
     try {
@@ -69,7 +74,7 @@ export default function PostPage() {
       );
       const data = await res.json();
       console.log(data);
-      setComments(data.data);
+      setComments(sortedComments(data.data));
     } catch (err) {
       console.log(err);
     }
@@ -218,7 +223,7 @@ export default function PostPage() {
         }
       );
       const data = await res.json();
-      setComments((comments) => [...comments, data.data]);
+      setComments(sortedComments([...comments, data.data]));
     } catch (err) {
       console.log(err);
     }
@@ -226,7 +231,7 @@ export default function PostPage() {
   };
 
   return (
-    <div className="h-fit">
+    <div className="  flex flex-col ">
       {" "}
       <div
         className={`flex  lg:px-10 justify-center 
@@ -241,11 +246,11 @@ export default function PostPage() {
           <div
             className=" flex overflow-y-scroll no-scrollbar  lg:px-10 
 
-    md:mx-auto  flex-col  w-[80vw] md:w-[20rem] xl:w-[40rem] 2xl:w-[50rem] p-5">
-            <div className="flex ">
+    md:mx-auto  flex-col    :w-[80vw] lg:w-[25rem] xl:w-[40rem] 2xl:w-[50rem] p-5">
+            <div className="flex items-center justify-center  ">
               <div className="">
                 {" "}
-                <div className="flex items-center gap-4">
+                <div className="  flex items-center gap-4">
                   <Avatar className="w-[2rem] h-[2rem]">
                     <AvatarImage src={community?.img}></AvatarImage>
                     <AvatarFallback>
@@ -307,7 +312,7 @@ export default function PostPage() {
                   </div>
 
                   <div className="bg-slate-100 hover:bg-slate-200 flex items-center w-fit gap-1 text-sm p-2 px-4 rounded-full">
-                    <MessageSquare className="w-4 h-4" /> 100
+                    <MessageSquare className="w-4 h-4" /> {comments.length}
                   </div>
 
                   <div className="bg-slate-100 hover:bg-slate-200 text-sm flex items-center gap-1 w-fit p-2 px-4 rounded-full">
@@ -316,6 +321,7 @@ export default function PostPage() {
                 </div>{" "}
               </div>
             </div>{" "}
+
             <div className="w-full mt-5 gap-5 items-center flex">
               <Input
                 onChange={(e) => setComment(e.target.value)}
@@ -325,12 +331,12 @@ export default function PostPage() {
               />
               <Button onClick={handleSubmitComment}>Comment</Button>
             </div>
-            <div>
+            <div className="overflow-y-scroll mt-10 h-[60vh] no-scrollbar">
               <CommentSection commentState={{ comments, setComments }} />
             </div>
           </div>{" "}
 
-          <div className="hidden md:flex  w-72 h-screen 2xl:w-96  flex-col  bg-slate-50 rounded-md">
+          <div className="hidden   lg:flex  w-72 2xl:w-96  flex-col  bg-slate-50 rounded-md">
             <div className="border-b w-full flex flex-col items-center p-5">
               <div className="flex border-b pb-3 items-center justify-between mb-5 w-full">
                 <h2 className="font-bold text-xl">{community?.title}</h2>

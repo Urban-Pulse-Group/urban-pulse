@@ -5,15 +5,20 @@ import { timeSince, truncateText } from "../utils/genUtils";
 import { ThickArrowDownIcon, ThickArrowUpIcon } from "@radix-ui/react-icons";
 import { MessageSquare, Share } from "lucide-react";
 import DOMPurify from "dompurify";
-import { Post } from "./CommunityPosts";
 import { Link } from "react-router-dom";
 import { useAuth } from "../state/authStore";
-
-export default function PostCard({
+import { Post } from "./CommunityPosts";
+export interface HomePost extends Post {
+   
+    community_slugs: string;
+    community_title: string;
+    community_img: string;
+}
+export default function HomePostCard({
   post,
   truncatedLength,
 }: {
-  post: Post;
+  post: HomePost;
   truncatedLength: number;
 }) {
   const [upvotes, setUpvotes] = useState<number>(1);
@@ -21,7 +26,7 @@ export default function PostCard({
   const [disliked, setDisliked] = useState<boolean>(false);
   const [originalVote, setOriginalVote] = useState(0);
 
-
+  const { user } = useAuth();
   const sanitizedContent = DOMPurify.sanitize(post.content);
   const truncatedContent = truncateText(sanitizedContent, truncatedLength);
 
@@ -136,32 +141,39 @@ export default function PostCard({
   };
 
   return (
-    <div className="border-t cursor-pointer  hover:bg-slate-50 w-[80vw] md:w-[20rem]  xl:w-[40rem] 2xl:w-[50rem] p-5  ">
-      <div className="flex text-xs text-gray-600 items-center gap-2 text-s">
-        <Avatar className="w-8 h-8 ">
-          <AvatarImage src=""></AvatarImage>
-          <AvatarFallback>
-            {post.username.split("")[0].toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <p>{post.username}</p>
+    <div className="border-t cursor-pointer hover:bg-slate-50 w-[80vw] md:w-[20rem] xl:w-[40rem] 2xl:w-[50rem] p-5">
+      <Link to={`/forum/communities/${post.community_slugs}/${post.id}`}>
+      
+          <div className="flex text-xs text-gray-600 items-center gap-2 text-s">
+
+              <Avatar className="w-8 h-8">
+                  <AvatarImage src={post.community_img} />
+                  <AvatarFallback>{post.community_title.split("")[0].toUpperCase() }</AvatarFallback>
+              </Avatar>
+
+              <p>{post.community_title} </p>
         <p>{timeSince(post.created_at)}</p>
-      </div>
-      <Link to={`${post.id}`}>
+        <p>•</p>
+      
+        
+      </div></Link>
+      <Link to={`/forum/communities/${post.community_slugs}/${post.id}`}>
         <h2 className="font-semibold text-lg mt-2">
           {post.title.split("")[0].toUpperCase() + post.title.slice(1)}
-        </h2>{" "}
+        </h2>
       </Link>
-      <Link to={`${post.id}`}>
+      <Link to={`/forum/communities/${post.community_slugs}/${post.id}`}>
         <div
-          className="text-sm mb-5  "
-          dangerouslySetInnerHTML={{ __html: truncatedContent }}></div>{" "}
+          className="text-sm mb-5"
+          dangerouslySetInnerHTML={{ __html: truncatedContent }}
+        ></div>
       </Link>
       <div className="flex gap-3 items-center">
         <div
           className={`flex gap-2 ${
             liked ? "bg-blue-600" : disliked ? "bg-primary" : "bg-slate-100"
-          } w-fit p-2 rounded-full`}>
+          } w-fit p-2 rounded-full`}
+        >
           <ThickArrowUpIcon
             onClick={(e) => handleClick("up", e)}
             className={`w-5 h-5 cursor-pointer ${
@@ -180,13 +192,13 @@ export default function PostCard({
         </div>
 
         <div className="bg-slate-100 hover:bg-slate-200 flex items-center w-fit gap-1 text-sm p-2 px-4 rounded-full">
-          <Link to={`${post.id}`}>
-            <MessageSquare className="w-4 h-4 " />
+          <Link to={`/forum/communities/${post.community_slugs}/${post.id}`}>
+            <MessageSquare className="w-4 h-4" />
           </Link>
           100
         </div>
 
-        <div className="bg-slate-100  hover:bg-slate-200text-sm flex items-center gap-1 w-fit p-2 px-4 rounded-full">
+        <div className="bg-slate-100 hover:bg-slate-200 text-sm flex items-center gap-1 w-fit p-2 px-4 rounded-full">
           <Share className="w-4 h-4" /> Share
         </div>
       </div>
