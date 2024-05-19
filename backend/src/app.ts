@@ -12,6 +12,8 @@ import communityRouter from "./routes/communityRoutes";
 import threadRouter from "./routes/threadRoutes";
 import replyRouter from "./routes/replyRoutes";
 import membershipRouter from "./routes/membershipRoute";
+import searchRouter from './routes/searchRoutes';
+
 dotenv.config();
 
 export const app: Application = express();
@@ -32,6 +34,8 @@ app.use("/api/thread", threadRouter)
 app.use("/api/reply", replyRouter)
 app.use("/api/membership", membershipRouter)
 app.use(errorHandler);
+app.use('/api/search', searchRouter);
+
 const PORT: number | string = process.env.PORT ?? 4040;
 const server: Server = app.listen(4040, () =>
   console.log(`server is on port ${PORT}`)
