@@ -31,7 +31,9 @@ export default function NavBar() {
   return (
     <div>
       <nav className="flex border-b   p-1 px-10 items-center  justify-between">
-        <Logo className="" />
+        <Link to="/">
+          <Logo className="" />
+        </Link>
 
         <ul className="hidden md:flex w-fit px-14 items-center h-fit gap-10">
           {items.map((item) => {
@@ -40,7 +42,9 @@ export default function NavBar() {
                 key={Math.floor(Math.random() * 23443243)}
                 className=" text-lg h-fit p-2"
               >
-                <Link to={item.link}>{item.name}</Link>
+                <Link className="hover:text-primary" to={item.link}>
+                  {item.name}
+                </Link>
               </li>
             );
           })}
@@ -55,8 +59,8 @@ export default function NavBar() {
             <li className="cursor-pointer">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Avatar className="w-10 h-10">
-                      <AvatarImage src={user?.img} />
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage src={user?.img} />
                     <AvatarFallback>{user?.name.split("")[0]}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
