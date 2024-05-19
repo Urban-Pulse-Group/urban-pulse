@@ -1,10 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Logo from "./Logo";
-
 import {
   Home,
   Menu,
-  Search,
+  Search as SearchIcon,
   CircleArrowOutUpRight,
   Info,
   CircleHelp,
@@ -17,7 +16,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./Accordion";
-
 import React, { useState, ReactNode, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
 import { Textarea } from "./TextArea";
@@ -42,14 +40,12 @@ import {
 } from "./DropdownMenu";
 import { Input } from "./Input";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./Sheet";
-import { useLocation } from "react-router-dom";
 import { storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuid } from "uuid";
 import { authenticatedFetch } from "../utils/fetchUtils";
 import { useAuth } from "../state/authStore";
 import LoadingOverlay from "./LoadingOverlay";
-import { useNavigate } from "react-router-dom";
 
 export interface Community {
   id?: string;
@@ -87,6 +83,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
     description: "",
     imageUpload: null,
   });
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const navigate = useNavigate();
   const path = location.pathname;
 
@@ -153,6 +150,14 @@ export default function Sidebar({ children }: { children: ReactNode }) {
   const handleShowMoreCommunities = () => {
     setShowAllCommunities(true);
   };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/forum/search?query=${searchQuery}`);
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
     getUserCommunities();
@@ -461,9 +466,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                                 onChange={(e) => {
                                   setCommunityNameInitial(
                                     e.target.value.length > 0
-                                      ? e.target.value
-                                          .split("")[0]
-                                          .toUpperCase()
+                                      ? e.target.value.split("")[0].toUpperCase()
                                       : e.target.value.split("")[0]
                                   );
                                   setFormData((formData) => ({
@@ -539,12 +542,11 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                         ) : (
                           <div>None so far</div>
                         )}
-                        {joinedCommunities.length > 7 &&
-                          !showAllCommunities && (
-                            <button onClick={handleShowMoreCommunities}>
-                              Show More
-                            </button>
-                          )}
+                        {joinedCommunities.length > 7 && !showAllCommunities && (
+                          <button onClick={handleShowMoreCommunities}>
+                            Show More
+                          </button>
+                        )}
                       </div>
                     </AccordionContent>
                   </AccordionItem>
@@ -578,12 +580,14 @@ export default function Sidebar({ children }: { children: ReactNode }) {
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">
-            <form>
+            <form onSubmit={handleSearch}>
               <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
                   placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
                 />
               </div>

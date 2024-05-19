@@ -16,7 +16,9 @@ import ForumAll from "./pages/ForumAll";
 import CommunityPage from "./pages/Community";
 import PostForm from "./pages/PostForm";
 import PostPage from "./pages/PostPage";
+import SearchPage from "./pages/SearchPage";
 export default function App() {
+
   const { getUser, setUser, setIsLoggedIn, isLoggedIn, user } = useAuth();
 
 
@@ -47,6 +49,7 @@ export default function App() {
           <Route path="communities/:slugs" element={<CommunityPage />} />
           <Route path=":slugs/new-post" element={<PostForm />} />
           <Route path="communities/:community/:id" element={<PostPage />} />
+          <Route path="search" element={<SearchPage />} />
         </Route>
 
         <Route path="/login" element={<Login />} />

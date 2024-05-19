@@ -11,7 +11,10 @@ class Search {
 
   static async searchPosts(query: string): Promise<any[]> {
     const result = await db.raw(
-      'SELECT * FROM posts WHERE title ILIKE ? OR content ILIKE ?',
+      `SELECT posts.*, communities.slugs as community_slugs, communities.title as community_title, communities.img as community_img
+       FROM posts
+       JOIN communities ON posts.community_id = communities.id
+       WHERE posts.title ILIKE ? OR posts.content ILIKE ?`,
       [`%${query}%`, `%${query}%`]
     );
     return result.rows;
