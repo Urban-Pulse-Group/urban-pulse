@@ -6,7 +6,8 @@ import { Container } from "./Container";
 const features = [
   {
     title: "Interactive Map",
-    description: "Search for locations and get detailed information about specific areas and communities.",
+    description:
+      "Search for locations and get detailed information about specific areas and communities.",
     image: "mapImg2.png",
   },
   {
@@ -14,20 +15,25 @@ const features = [
     description: "Stay updated on local events and issues.",
     image: "./popularImg.png",
   },
-  {
-    title: "Discussion Threads",
-    description: "Participate in discussions and share your thoughts on community issues.",
-    image: "",
-  },
+
   {
     title: "Community Statistics",
-    description: "Access detailed statistics about community demographics and other important data.",
+    description:
+      "Access detailed statistics about community demographics and other important data.",
     image: "mapImg.png",
+  },
+  {
+    title: "Discussion Threads",
+    description:
+      "Participate in discussions and share your thoughts on community issues.",
+    image: "",
   },
 ];
 
 export function Features() {
-  let [tabOrientation, setTabOrientation] = useState<"horizontal" | "vertical">("horizontal");
+  let [tabOrientation, setTabOrientation] = useState<"horizontal" | "vertical">(
+    "horizontal"
+  );
 
   useEffect(() => {
     let lgMediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -62,7 +68,9 @@ export function Features() {
             Feel the Pulse of Your Community
           </h2>
           <p className="mt-6 text-lg tracking-tight text-blue-100">
-          Utilize Urban Pulse's tools to stay informed, engage with others, and contribute to your community." to provide a clearer idea of the app's functionalities.
+            Utilize Urban Pulse's tools to stay informed, engage with others,
+            and contribute to your community." to provide a clearer idea of the
+            app's functionalities.
           </p>
         </div>
         <Tab.Group
