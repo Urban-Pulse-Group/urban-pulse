@@ -25,6 +25,7 @@
     "firebase": "^10.11.1",
     "framer-motion": "^11.2.0",
     "fuzzysearch": "^1.0.3",
+    "headlessui": "^0.0.0",
     "leaflet": "^1.9.4",
     "leaflet-control-geocoder": "^2.4.0",
     "lucide-react": "^0.378.0",

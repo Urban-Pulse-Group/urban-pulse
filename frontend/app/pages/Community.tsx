@@ -112,9 +112,9 @@ export default function CommunityPage() {
   };
 
   return (
-    <div className="flex mt-5 md:mt-20 lg:px-10 justify-center md:mx-auto flex-col">
+    <div className="flex mt-5 md:mt-20  lg:px-10 justify-center md:mx-auto flex-col">
       <div className="">
-        <div className="flex gap-5 flex-col md:flex-row justify-between w-full flex-wrap">
+        <div className="flex gap-5 flex-col  md:flex-row justify-between w-full flex-wrap">
           <div className="flex items-center gap-4">
             <Avatar className="w-[3rem] h-[3rem]">
               <AvatarImage src={community?.img}></AvatarImage>

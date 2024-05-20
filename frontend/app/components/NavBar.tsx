@@ -30,7 +30,7 @@ export default function NavBar() {
 
   return (
     <div>
-      <nav className="flex border-b   p-1 px-10 items-center  justify-between">
+      <nav className="flex border-b    px-10 items-center  justify-between">
         <Link to="/">
           <Logo className="" />
         </Link>
