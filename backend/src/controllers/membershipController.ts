@@ -47,4 +47,19 @@ export const getUserMemberships = asyncHandler(async (req: Request, res: Respons
     const communities = await Memberships.getUserMemberships(userId);
 
     res.status(200).json({ data: communities });
-  });
+});
+
+/**
+ * @desc Get the numebr of memberships a community has
+ * @route GET /api/membership/count/:communityId
+ * @access Private
+ */
+export const getMembershipCount = asyncHandler(async (req: Request, res: Response) => {
+  const {communityId} = req.params
+  
+    const count = await Memberships.getMembershipCount(communityId);
+    res.status(200).json({ data: count });
+});
+  
+
+  

@@ -12,6 +12,21 @@ export default function CommunityPage() {
   const { user, setJoinedCommunities, joinedCommunities } = useAuth();
   const [community, setCommunity] = useState<Community | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [members, setMembers] = useState<number>(0);
+
+  const getMembershipCount = async (communityId: string) => {
+    try {
+      const response = await authenticatedFetch(`http://localhost:4040/api/membership/count/${communityId}`, localStorage.getItem("token"));
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setMembers(data.data);
+    } catch (error) {
+      console.error("Error fetching membership count:", error);
+      throw error;
+    }
+  };
   const [isMember, setIsMember] = useState(false);
 
   useEffect(() => {
@@ -65,6 +80,7 @@ export default function CommunityPage() {
       }
     };
     fetchPosts();
+    getMembershipCount(community.id!);
   }, [community]);
 
   const joinCommunity = async () => {
@@ -163,7 +179,7 @@ export default function CommunityPage() {
           </div>
           <div className="flex mt-5 justify-center gap-5">
             <div className="flex flex-col items-center">
-              <p>3</p>
+              <p>{members}</p>
               <p className="text-gray-500 text-sm">members</p>
             </div>
             <div className="flex flex-col items-center">

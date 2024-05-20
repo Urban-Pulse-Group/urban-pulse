@@ -9,6 +9,8 @@ interface AuthState {
   token: string | null;
   isLoggedIn: boolean;
   joinedCommunities: Community[];
+  loadingUser: boolean;
+  setLoadingUser: (bool: boolean) => void;
   logout: (navigate: (url: string) => void) => Promise<void>;
   getUser: () => Promise<User | null>;
   getUserCommunities: () => Promise<void>;
@@ -24,8 +26,11 @@ export const useAuth = create<AuthState>((set, get) => ({
   isLoggedIn: false,
   token: localStorage.getItem("token"),
   joinedCommunities: [],
+  loadingUser: true,
+  setLoadingUser: (bool: boolean) => set({loadingUser: bool}),
 
   getUser: async () => {
+    get().setLoadingUser(true)
     try {
       const res = await authenticatedFetch(
         "http://localhost:4040/api/auth/getUser",
@@ -33,7 +38,7 @@ export const useAuth = create<AuthState>((set, get) => ({
       );
       const data = await res.json();
       if (data?.user) {
-        set({ user: data.user, isLoggedIn: true });
+        set({ user: data.user, isLoggedIn: true, loadingUser: false });
         if ("token" in data) {
           localStorage.setItem("token", data.token);
         }
@@ -42,7 +47,7 @@ export const useAuth = create<AuthState>((set, get) => ({
       }
     } catch (error) {
       console.error("User not authenticated:", error);
-      set({ user: null, isLoggedIn: false });
+      set({ user: null, isLoggedIn: false, loadingUser: false });
       return null;
     }
   },
