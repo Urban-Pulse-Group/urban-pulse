@@ -163,11 +163,11 @@ export default function CommunityPage() {
           </div>
           <div className="flex mt-5 justify-center gap-5">
             <div className="flex flex-col items-center">
-              <p>35</p>
+              <p>3</p>
               <p className="text-gray-500 text-sm">members</p>
             </div>
             <div className="flex flex-col items-center">
-              <p>12</p>
+              <p>{posts?.length ?? 0}</p>
               <p className="text-gray-500 text-sm">posts</p>
             </div>
           </div>

@@ -35,7 +35,7 @@ export const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
 });
 
 /**
- * @desc gets a single post using community id retrieved frrom url params
+ * @desc gets a single post using community id retrieved from url params
  * @route  GET /api/post/:id
  * @access Private
  */

@@ -183,7 +183,7 @@ export default function PostCard({
           <Link to={`${post.id}`}>
             <MessageSquare className="w-4 h-4 " />
           </Link>
-          100
+          {post.total_count}
         </div>
 
         <div className="bg-slate-100  hover:bg-slate-200text-sm flex items-center gap-1 w-fit p-2 px-4 rounded-full">

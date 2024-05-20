@@ -20,6 +20,9 @@ export interface Post {
   img?: string;
   username: string;
   likes: number;
+  reply_count?: number;
+  thread_count?: number;
+  total_count?: number;
 }
 export default function CommunityPosts({
   postState,
