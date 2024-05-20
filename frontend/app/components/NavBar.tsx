@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
 
 const NavbarItem = ({ link, name }) => (
   <li className="text-md h-fit">
-    <a className="hover:text-slate-200" href={link}>
+    <a className="hover:text-primary" href={link}>
       {name}
     </a>
   </li>
