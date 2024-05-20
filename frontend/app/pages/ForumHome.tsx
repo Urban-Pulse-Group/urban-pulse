@@ -87,7 +87,7 @@ export default function HomePage() {
         </div>
         <div className="hidden md:flex w-72 h-screen 2xl:w-96 flex-col bg-slate-50 rounded-md">
           <div className="border-b w-full flex flex-col items-center p-5">
-            <div className="ml-8">
+            <div className="ml-1">
               <Logo />
             </div>
 
