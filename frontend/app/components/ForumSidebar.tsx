@@ -164,7 +164,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <div className="grid min-h-screen fixed w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+    <div className="grid min-h-screen  fixed w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex border-r-0 h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
@@ -596,8 +596,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
-                <Avatar>
-                  <AvatarImage src={""}></AvatarImage>
+                <Avatar className="w-9 h-9">
+                  <AvatarImage src={user?.img}></AvatarImage>
                   <AvatarFallback>?</AvatarFallback>
                 </Avatar>
                 <span className="sr-only">Toggle user menu</span>
