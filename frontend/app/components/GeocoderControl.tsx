@@ -77,6 +77,7 @@ const GeocoderControlComponent: React.FC<GeocoderControlProps> = ({
               `http://localhost:4040/api/census/census-data?state=${stateCode}&place=${placeCode}`
             );
             if (!censusResponse.ok) {
+            
               throw new Error("Failed to fetch data from backend");
             }
             const censusData = await censusResponse.json();

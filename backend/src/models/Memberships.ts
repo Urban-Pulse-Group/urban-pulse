@@ -4,7 +4,10 @@ export class Memberships {
   /**
    * @desc Join a community
    */
-  static async joinCommunity(userId: string, communityId: string): Promise<void> {
+  static async joinCommunity(
+    userId: string,
+    communityId: string
+  ): Promise<void> {
     await db.raw(
       `
       INSERT INTO memberships (user_id, community_id)
@@ -18,7 +21,10 @@ export class Memberships {
   /**
    * @desc Leave a community
    */
-  static async leaveCommunity(userId: string, communityId: string): Promise<void> {
+  static async leaveCommunity(
+    userId: string,
+    communityId: string
+  ): Promise<void> {
     await db.raw(
       `
       DELETE FROM memberships
@@ -31,7 +37,10 @@ export class Memberships {
   /**
    * @desc Check if a user has joined a community
    */
-  static async isUserInCommunity(userId: string, communityId: string): Promise<boolean> {
+  static async isUserInCommunity(
+    userId: string,
+    communityId: string
+  ): Promise<boolean> {
     const { rows } = await db.raw(
       `
       SELECT 1 FROM memberships
@@ -44,7 +53,7 @@ export class Memberships {
 
   /**
    * @desc Get all communities the user is apart of
-   * 
+   *
    */
   static async getUserMemberships(userId: string): Promise<boolean> {
     const { rows } = await db.raw(
@@ -57,5 +66,20 @@ export class Memberships {
       [userId]
     );
     return rows;
+  }
+
+  /**
+   * @desc gets membership count
+   */
+  static async getMembershipCount(communityId: string) {
+    const { rows } = await db.raw(
+      `
+        SELECT COUNT(*) as membership_count
+        FROM memberships
+        WHERE community_id = ?
+        `,
+      [communityId]
+    );
+    return rows[0].membership_count;
   }
 }

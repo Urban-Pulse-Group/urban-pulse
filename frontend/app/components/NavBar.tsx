@@ -29,18 +29,18 @@ export default function NavBar() {
   const navigate = useNavigate();
 
   return (
-    <div>
+    <div className="sticky">
       <nav className="flex border-b    px-10 items-center  justify-between">
         <Link to="/">
           <Logo className="" />
         </Link>
 
-        <ul className="hidden md:flex w-fit px-14 items-center h-fit gap-10">
+        <ul className="hidden md:flex w-fit px-14 items-center h-fit gap-12">
           {items.map((item) => {
             return (
               <li
                 key={Math.floor(Math.random() * 23443243)}
-                className=" text-lg h-fit p-2"
+                className=" text-md h-fit "
               >
                 <Link className="hover:text-primary" to={item.link}>
                   {item.name}
@@ -59,7 +59,7 @@ export default function NavBar() {
             <li className="cursor-pointer">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="w-10 h-10">
+                  <Avatar className="w-8 h-8">
                     <AvatarImage src={user?.img} />
                     <AvatarFallback>{user?.name.split("")[0]}</AvatarFallback>
                   </Avatar>
@@ -126,7 +126,7 @@ const items: NavbarItem[] = [
     name: "Map",
   },
   {
-    link: "/forum",
+    link: "/forum/home",
     name: "Communities",
   },
 ];

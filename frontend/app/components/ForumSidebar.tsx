@@ -603,13 +603,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-            </DropdownMenuContent>
+            
           </DropdownMenu>
         </header>
         <main className="flex h-screen overflow-scroll flex-col gap-4 p-4 lg:gap-6 lg:p-6">

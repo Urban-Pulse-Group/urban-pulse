@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-
+import headlessuiPlugin from '@headlessui/tailwindcss'
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -89,5 +89,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), ],
+  plugins: [require("tailwindcss-animate"),headlessuiPlugin ],
 }
