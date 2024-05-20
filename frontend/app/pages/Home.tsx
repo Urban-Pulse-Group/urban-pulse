@@ -1,13 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Home as HomeIcon, Info, Map } from "lucide-react";
+import { Mission } from "../components/Mission";
 import { Hero } from "../components/Hero";
 import { Features } from "../components/Features";
+import { Footer } from "../components/Footer";
 export default function Home() {
   return (
-    <div>
+    <div className="z-">
       <Hero />
       <Features />
+      <Mission />
+      <Footer />
     </div>
   );
 }
