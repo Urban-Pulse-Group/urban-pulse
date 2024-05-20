@@ -52,12 +52,39 @@ export class Posts {
    */
   static async findByCommunityId(communityId: string): Promise<Post | null> {
     const { rows } = await db.raw(
-      `SELECT posts.*, users.username
-      FROM posts
-      JOIN users ON posts.user_id = users.id
-      WHERE posts.community_id = ?`,
+      `SELECT 
+      posts.*, 
+      users.username,
+      COALESCE((
+        SELECT COUNT(*)
+        FROM threads
+        WHERE threads.post_id = posts.id
+      ), 0) AS thread_count,
+      COALESCE((
+        SELECT COUNT(*)
+        FROM replies
+        JOIN threads ON replies.thread_id = threads.id
+        WHERE threads.post_id = posts.id
+      ), 0) AS reply_count,
+      (
+        COALESCE((
+          SELECT COUNT(*)
+          FROM threads
+          WHERE threads.post_id = posts.id
+        ), 0) +
+        COALESCE((
+          SELECT COUNT(*)
+          FROM replies
+          JOIN threads ON replies.thread_id = threads.id
+          WHERE threads.post_id = posts.id
+        ), 0)
+      ) AS total_count
+    FROM posts
+    JOIN users ON posts.user_id = users.id
+    WHERE posts.community_id = ?`,
       [communityId]
     );
+
     const communityExists = rows.length > 0;
     if (!communityExists) {
       return null;
