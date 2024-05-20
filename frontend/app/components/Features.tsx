@@ -26,7 +26,7 @@ const features = [
     title: "Discussion Threads",
     description:
       "Participate in discussions and share your thoughts on community issues.",
-    image: "",
+    image: "./discussionImg.png",
   },
 ];
 
