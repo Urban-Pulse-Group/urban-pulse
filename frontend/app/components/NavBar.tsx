@@ -42,12 +42,12 @@ export default function NavBar() {
 
   return (
     <div className="sticky z-[10000]">
-      <nav className="flex border-b px-10 items-center justify-between">
-        <Link to="/" className="ml-[-3.5rem] lg:ml-[-1rem]">
+      <nav className="  flex border-b px-10 lg:px-0 items-center justify-between">
+        <Link to="/" className="ml-[-2.5rem] lg:ml-[-.9rem]">
           <Logo className="" />
         </Link>
 
-        <ul className="hidden lg:flex w-fit px-14 items-center h-fit gap-12">
+        <ul className="hidden lg:flex w-fit px-10 items-center h-fit gap-12">
           {items.map((item) => (
             <NavbarItem key={item.name} link={item.link} name={item.name} />
           ))}
