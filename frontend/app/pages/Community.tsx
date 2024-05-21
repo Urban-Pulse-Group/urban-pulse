@@ -96,6 +96,7 @@ export default function CommunityPage() {
           }),
         }
       );
+    
       setIsMember(true);
       setJoinedCommunities([...joinedCommunities, community!]);
     } catch (err) {
