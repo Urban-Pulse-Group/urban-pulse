@@ -57,6 +57,9 @@ export default function Login() {
   };
 return (
   <div className="w-screen flex items-center justify-center h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+     <div className="absolute left-5 top-5 ">
+            <ReturnHomeButton />
+          </div>
     <div className="flex items-center justify-center py-12">
       <div className="mx-auto grid w-[350px] gap-6 mb-8 overflow-visible">
         <form className="grid gap-6" onSubmit={handleSubmit}>
@@ -112,9 +115,7 @@ return (
             </Link>
           </div>
         </form>
-        <div className="mt-4 text-center">
-          <ReturnHomeButton />
-        </div>
+        
       </div>
     </div>
     <div className="hidden lg:h-screen bg-muted lg:flex items-center">

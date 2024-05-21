@@ -3,7 +3,7 @@ import { PageIntro } from "../components/PageIntro";
 
 export function Mission() {
   return (
-    <div className="pb-50">
+    <div id="mission" className="pb-50">
       <PageIntro eyebrow="Mission" title="Connecting Communities">
         <p>
           Urban Pulse aims to connect and engage communities by providing tools

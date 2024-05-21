@@ -49,7 +49,7 @@ const GeocoderControlComponent: React.FC<GeocoderControlProps> = ({
       // Fetch data from Census API
       try {
         const response = await fetch(
-          "https://api.census.gov/data/2019/acs/acs1?get=NAME,B01001_001E&for=place:*&in=state:*"
+          `https://api.census.gov/data/2019/acs/acs1?get=NAME,B01001_001E&for=place:*&in=state:*`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data from API");
@@ -77,7 +77,6 @@ const GeocoderControlComponent: React.FC<GeocoderControlProps> = ({
               `http://localhost:4040/api/census/census-data?state=${stateCode}&place=${placeCode}`
             );
             if (!censusResponse.ok) {
-            
               throw new Error("Failed to fetch data from backend");
             }
             const censusData = await censusResponse.json();
@@ -85,12 +84,10 @@ const GeocoderControlComponent: React.FC<GeocoderControlProps> = ({
             console.log(censusData);
           } catch (error) {
             console.error("Error fetching Census data:", error);
-            
           }
         } else {
           console.log("Location not found in API data");
           onCensusDataReceived(null);
-          
         }
       } catch (error) {
         console.error("Error fetching data from Census API:", error);

@@ -144,7 +144,7 @@ export default function PostPage() {
         throw error;
       }
     };
-    getMembershipCount(community.id);
+    getMembershipCount(community.id!);
   }, [community]);
 
   const joinCommunity = async () => {
