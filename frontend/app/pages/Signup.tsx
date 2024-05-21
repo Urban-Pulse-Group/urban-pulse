@@ -8,6 +8,7 @@ import { storage } from "../firebase";
 import { v4 as uuid } from "uuid";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/Avatar";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import ReturnHomeButton from "../components/ReturnHome";
 interface FormData {
   name: string;
   username: string;
@@ -131,104 +132,109 @@ console.log(formData)
   };
 
   return (
-    <div className="w-screen  justify-center flex items-center h-screen overflow-scroll sm:overflow-hidden lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="w-screen justify-center flex items-center h-screen overflow-scroll sm:overflow-hidden lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
-        <form onSubmit={handleSubmit} className="mx-auto mt-10 sm:mt-0 grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Sign Up</h1>
-            <p className="text-balance text-muted-foreground">
-              Enter your credentials below to sign up
-            </p>
+        <div className="mx-auto mt-10 sm:mt-0 grid w-[350px] gap-6">
+          <form onSubmit={handleSubmit} className="grid gap-6">
+            <div className="grid gap-2 text-center">
+              <h1 className="text-3xl font-bold">Sign Up</h1>
+              <p className="text-balance text-muted-foreground">
+                Enter your credentials below to sign up
+              </p>
+            </div>
+            <div className="w-full flex flex-col items-center">
+              <Avatar className="w-20 h-20" onClick={handleAvatarClick}>
+                {imgSrc ? (
+                  <AvatarImage src={imgSrc} alt="Uploaded avatar" />
+                ) : (
+                  <AvatarFallback>?</AvatarFallback>
+                )}
+              </Avatar>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+              />
+              {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
+            </div>
+            {errorMessage && (
+              <div className="text-red-600 text-center">{errorMessage}</div>
+            )}
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Name"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  autoComplete="off"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Username"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete="off"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Password"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm Password"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                Sign up
+              </Button>
+            </div>
+            <div className="mt-4 text-center text-sm">
+              Already have an account?{" "}
+              <Link to="/login" className="underline">
+                Login
+              </Link>
+            </div>
+          </form>
+          <div className="mt-4 text-center">
+            <ReturnHomeButton />
           </div>
-          <div className="w-full flex flex-col items-center">
-            <Avatar className="w-20 h-20 " onClick={handleAvatarClick}>
-              {imgSrc ? (
-                <AvatarImage className="" src={imgSrc} alt="Uploaded avatar" />
-              ) : (
-                <AvatarFallback>?</AvatarFallback>
-              )}
-            </Avatar>
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-            />
-            {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
-          </div>
-          {errorMessage && (
-            <div className="text-red-600 text-center">{errorMessage}</div>
-          )}
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Name"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                type="text"
-                autoComplete="off"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Username"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="off"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Password"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm Password"
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Sign up
-            </Button>
-          </div>
-          <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-            <Link to="/login" className="underline">
-              Login
-            </Link>
-          </div>
-        </form>
+        </div>
       </div>
       <div className="hidden lg:h-screen bg-muted lg:flex items-center">
         <img

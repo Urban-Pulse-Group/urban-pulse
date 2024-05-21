@@ -5,6 +5,7 @@ import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { Label } from "../components/label";
 import { useAuth } from "../state/authStore";
+import ReturnHomeButton from "../components/ReturnHome";
 
 export default function Login() {
   const { login } = useAuth();
@@ -54,11 +55,11 @@ export default function Login() {
       console.error("Login error:", error);
     }
   };
-
-  return (
-    <div className="w-screen flex items-center justify-center h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-      <div className="flex items-center justify-center py-12">
-        <form className="mx-auto grid w-[350px] gap-6" onSubmit={handleSubmit}>
+return (
+  <div className="w-screen flex items-center justify-center h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="flex items-center justify-center py-12">
+      <div className="mx-auto grid w-[350px] gap-6 mb-8 overflow-visible">
+        <form className="grid gap-6" onSubmit={handleSubmit}>
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
             <p className="text-balance text-muted-foreground">
@@ -100,9 +101,7 @@ export default function Login() {
                 required
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full ">
+            <Button type="submit" className="w-full">
               Login
             </Button>
           </div>
@@ -113,14 +112,19 @@ export default function Login() {
             </Link>
           </div>
         </form>
-      </div>
-      <div className="hidden lg:h-screen bg-muted lg:flex items-center">
-        <img
-          src="/logo.svg"
-          alt="Image"
-          className="w-[50vw] object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+        <div className="mt-4 text-center">
+          <ReturnHomeButton />
+        </div>
       </div>
     </div>
-  );
+    <div className="hidden lg:h-screen bg-muted lg:flex items-center">
+      <img
+        src="/logo.svg"
+        alt="Image"
+        className="w-[50vw] object-cover dark:brightness-[0.2] dark:grayscale"
+      />
+    </div>
+  </div>
+);
 }
+

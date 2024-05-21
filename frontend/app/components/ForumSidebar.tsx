@@ -64,6 +64,7 @@ interface FormData {
   imageUpload: File | null;
 }
 
+
 export default function Sidebar({ children }: { children: ReactNode }) {
   const location = useLocation();
   const {
@@ -627,6 +628,14 @@ const items = [
   },
 ];
 
+const scrollToMissionSection = () => {
+  const missionSection = document.getElementById('mission'); // Assuming your mission section has an ID of "mission"
+  if (missionSection) {
+    missionSection.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
+  } else {
+    console.error('Mission section element not found');
+  }
+};
 const resourceItems = [
   {
     title: "Home",
@@ -638,14 +647,15 @@ const resourceItems = [
     icon: <Map className="h-4 w-4" />,
     path: "/map",
   },
-  {
-    title: "Help",
-    icon: <CircleHelp className="h-4 w-4" />,
-    path: "/help",
-  },
+  // {
+  //   title: "Help",
+  //   icon: <CircleHelp className="h-4 w-4" />,
+  //   path: "/help",
+  // },
   {
     title: "About Urban Pulse",
     icon: <Info className="h-4 w-4" />,
-    path: "/about",
+    path: "/#mission",
   },
 ];
+
