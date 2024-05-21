@@ -16,7 +16,10 @@ export default function CommunityPage() {
 
   const getMembershipCount = async (communityId: string) => {
     try {
-      const response = await authenticatedFetch(`http://localhost:4040/api/membership/count/${communityId}`, localStorage.getItem("token"));
+      const response = await authenticatedFetch(
+        `http://localhost:4040/api/membership/count/${communityId}`,
+        localStorage.getItem("token")
+      );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -152,13 +155,15 @@ export default function CommunityPage() {
             {isMember ? (
               <button
                 onClick={leaveCommunity}
-                className="rounded-3xl border px-3 py-2 text-sm hover:border-primary bg-primary hover:bg-primary text-white">
+                className="rounded-3xl border px-3 py-2 text-sm hover:border-primary bg-primary hover:bg-primary text-white"
+              >
                 Leave
               </button>
             ) : (
               <button
                 onClick={joinCommunity}
-                className="rounded-3xl border px-3 py-2 text-sm hover:border-primary bg-primary hover:bg-primary text-white">
+                className="rounded-3xl border px-3 py-2 text-sm hover:border-primary bg-primary hover:bg-primary text-white"
+              >
                 Join
               </button>
             )}
