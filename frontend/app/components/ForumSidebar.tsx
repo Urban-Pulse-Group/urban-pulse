@@ -64,7 +64,6 @@ interface FormData {
   imageUpload: File | null;
 }
 
-
 export default function Sidebar({ children }: { children: ReactNode }) {
   const location = useLocation();
   const {
@@ -185,7 +184,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                         ? "bg-muted text-primary"
                         : "text-muted-foreground"
                     } flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all text-md duration-300 hover:text-primary`}
-                    to={item.path}>
+                    to={item.path}
+                  >
                     {item.icon}
                     {item.title}
                   </Link>
@@ -194,7 +194,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
               <Accordion
                 defaultValue={["item-1", "item-2", "item-3"]}
                 type="multiple"
-                className="w-full border-b">
+                className="w-full border-b"
+              >
                 <AccordionItem className="px-3 py-2 border-b" value="item-1">
                   <AccordionTrigger className="font-md text-[#71717A] hover:text-primary">
                     Recent
@@ -219,7 +220,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                             });
                             setImageSrc("");
                           }}
-                          className="flex gap-1 items-center mb-2 text-[#71717A] hover:text-primary cursor-pointer">
+                          className="flex gap-1 items-center mb-2 text-[#71717A] hover:text-primary cursor-pointer"
+                        >
                           <Plus className="w-4 h-4" /> Create a community
                         </button>
                       </DialogTrigger>
@@ -233,7 +235,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                         </DialogHeader>
                         <form
                           onSubmit={handleCreateCommunity}
-                          className="flex gap-4 items-center flex-col justify-center py-4">
+                          className="flex gap-4 items-center flex-col justify-center py-4"
+                        >
                           <div>
                             <Avatar className="h-20 w-20">
                               <AvatarImage
@@ -294,7 +297,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                                 imageUpload: e.target.files![0] as File,
                               }));
                             }}
-                            className="flex bg-slate-50 border p-1 rounded-md w-[90%] file:bg-primary file:text-white file:border-none file:p-1 file:px-3 file:text-sm file:rounded-md file:mr-5 file:py-2 file:hover:bg-primary/90 file:cursor-pointer"></input>
+                            className="flex bg-slate-50 border p-1 rounded-md w-[90%] file:bg-primary file:text-white file:border-none file:p-1 file:px-3 file:text-sm file:rounded-md file:mr-5 file:py-2 file:hover:bg-primary/90 file:cursor-pointer"
+                          ></input>
 
                           <DialogFooter>
                             <DialogPrimitive.Close>
@@ -316,7 +320,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                             <Link
                               className="flex items-center gap-2"
                               to={`communities/${community.slugs}`}
-                              key={community.id}>
+                              key={community.id}
+                            >
                               <Avatar className="w-[32px] h-[32px]">
                                 <AvatarImage src={community.img} />
                                 <AvatarFallback>
@@ -341,7 +346,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                 <AccordionItem
                   data-state="open"
                   className="px-3 py-2 scale-1"
-                  value="item-3">
+                  value="item-3"
+                >
                   <AccordionTrigger className="font-md text-[#71717A] hover:text-primary">
                     Resources
                   </AccordionTrigger>
@@ -374,7 +380,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
               <Button
                 variant="outline"
                 size="icon"
-                className="shrink-0 md:hidden">
+                className="shrink-0 md:hidden"
+              >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
@@ -396,7 +403,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                             ? "bg-muted text-primary"
                             : "text-muted-foreground"
                         } flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all text-md duration-300 hover:text-primary`}
-                        to={item.path}>
+                        to={item.path}
+                      >
                         {item.icon}
                         {item.title}
                       </Link>
@@ -406,7 +414,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                 <Accordion
                   defaultValue={["item-1", "item-2", "item-3"]}
                   type="multiple"
-                  className="w-full border-b">
+                  className="w-full border-b"
+                >
                   <AccordionItem className="px-3 py-2 border-b" value="item-1">
                     <AccordionTrigger className="font-md text-[#71717A] hover:text-primary">
                       Recent
@@ -431,7 +440,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                               });
                               setImageSrc("");
                             }}
-                            className="flex gap-1 items-center mb-2 text-[#71717A] hover:text-primary cursor-pointer">
+                            className="flex gap-1 items-center mb-2 text-[#71717A] hover:text-primary cursor-pointer"
+                          >
                             <Plus className="w-4 h-4" /> Create a community
                           </button>
                         </DialogTrigger>
@@ -445,7 +455,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                           </DialogHeader>
                           <form
                             onSubmit={handleCreateCommunity}
-                            className="flex gap-4 items-center flex-col justify-center py-4">
+                            className="flex gap-4 items-center flex-col justify-center py-4"
+                          >
                             <div>
                               <Avatar className="h-20 w-20">
                                 <AvatarImage
@@ -467,7 +478,9 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                                 onChange={(e) => {
                                   setCommunityNameInitial(
                                     e.target.value.length > 0
-                                      ? e.target.value.split("")[0].toUpperCase()
+                                      ? e.target.value
+                                          .split("")[0]
+                                          .toUpperCase()
                                       : e.target.value.split("")[0]
                                   );
                                   setFormData((formData) => ({
@@ -508,7 +521,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                                   imageUpload: e.target.files![0] as File,
                                 }));
                               }}
-                              className="flex bg-slate-50 border p-1 rounded-md w-[90%] file:bg-primary file:text-white file:border-none file:p-1 file:px-3 file:text-sm file:rounded-md file:mr-5 file:py-2 file:hover:bg-primary/90 file:cursor-pointer"></input>
+                              className="flex bg-slate-50 border p-1 rounded-md w-[90%] file:bg-primary file:text-white file:border-none file:p-1 file:px-3 file:text-sm file:rounded-md file:mr-5 file:py-2 file:hover:bg-primary/90 file:cursor-pointer"
+                            ></input>
 
                             <DialogFooter>
                               <DialogPrimitive.Close>
@@ -530,7 +544,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                               <Link
                                 className="flex items-center gap-2"
                                 to={`communities/${community.slugs}`}
-                                key={community.id}>
+                                key={community.id}
+                              >
                                 <Avatar className="w-[32px] h-[32px]">
                                   <AvatarImage src={community.img} />
                                   <AvatarFallback>
@@ -543,11 +558,12 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                         ) : (
                           <div>None so far</div>
                         )}
-                        {joinedCommunities.length > 7 && !showAllCommunities && (
-                          <button onClick={handleShowMoreCommunities}>
-                            Show More
-                          </button>
-                        )}
+                        {joinedCommunities.length > 7 &&
+                          !showAllCommunities && (
+                            <button onClick={handleShowMoreCommunities}>
+                              Show More
+                            </button>
+                          )}
                       </div>
                     </AccordionContent>
                   </AccordionItem>
@@ -555,7 +571,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                   <AccordionItem
                     data-state="open"
                     className="px-3 py-2 scale-1"
-                    value="item-3">
+                    value="item-3"
+                  >
                     <AccordionTrigger className="font-md text-[#71717A] hover:text-primary">
                       Resources
                     </AccordionTrigger>
@@ -604,7 +621,6 @@ export default function Sidebar({ children }: { children: ReactNode }) {
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
-            
           </DropdownMenu>
         </header>
         <main className="flex h-screen overflow-scroll flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -629,11 +645,11 @@ const items = [
 ];
 
 const scrollToMissionSection = () => {
-  const missionSection = document.getElementById('mission'); // Assuming your mission section has an ID of "mission"
+  const missionSection = document.getElementById("mission"); // Assuming your mission section has an ID of "mission"
   if (missionSection) {
-    missionSection.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
+    missionSection.scrollIntoView({ behavior: "smooth" }); // Smooth scrolling
   } else {
-    console.error('Mission section element not found');
+    console.error("Mission section element not found");
   }
 };
 const resourceItems = [
@@ -652,10 +668,9 @@ const resourceItems = [
   //   icon: <CircleHelp className="h-4 w-4" />,
   //   path: "/help",
   // },
-  {
-    title: "About Urban Pulse",
-    icon: <Info className="h-4 w-4" />,
-    path: "/#mission",
-  },
+  // {
+  //   title: "About Urban Pulse",
+  //   icon: <Info className="h-4 w-4" />,
+  //   path: "/#mission",
+  // },
 ];
-
