@@ -126,7 +126,7 @@ const LeafletMap: React.FC = () => {
   const housingData = censusData
     ? [
         { name: "Median Home Value", value: formatCurrency(parseFloat(censusData.data[1][17])) },
-        { name: "Median Rent", value: formatCurrency(parseFloat(censusData.data[1][18])) },
+        { name: "Median Rent", value: formatCurrency(parseFloat(censusData.data[1][20])) },
         { name: "Vacant Units", value: formatNumber(parseFloat(censusData.data[1][19])) },
       ]
     : [];
