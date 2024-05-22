@@ -599,7 +599,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
               <Button variant="secondary" size="icon" className="rounded-full">
                 <Avatar className="w-9 h-9">
                   <AvatarImage src={user?.img}></AvatarImage>
-                  <AvatarFallback>?</AvatarFallback>
+                  <AvatarFallback>{user?.name.split("")[0].toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <span className="sr-only">Toggle user menu</span>
               </Button>

@@ -121,7 +121,7 @@ export default function NavBar() {
                     <AvatarFallback>{user?.name.split("")[0]}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-40">
+                <DropdownMenuContent className="w-40 ">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup></DropdownMenuGroup>

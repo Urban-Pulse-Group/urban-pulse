@@ -20,7 +20,7 @@ export function PageIntro({
     >
       <div>
         <h1>
-          <span className="block font-display text-base font-semibold text-neutral-950">
+          <span className="block font-display text-3xl  font-semibold text-neutral-950">
             {eyebrow}
           </span>
           <span className="sr-only"> - </span>
