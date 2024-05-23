@@ -13,14 +13,17 @@ import threadRouter from "./routes/threadRoutes";
 import replyRouter from "./routes/replyRoutes";
 import membershipRouter from "./routes/membershipRoute";
 import searchRouter from './routes/searchRoutes';
+import path from 'path';
 
 dotenv.config();
+
 
 export const app: Application = express();
 const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true,
 };
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -35,8 +38,11 @@ app.use("/api/reply", replyRouter)
 app.use("/api/membership", membershipRouter)
 app.use(errorHandler);
 app.use('/api/search', searchRouter);
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
+});
 
 const PORT: number | string = process.env.PORT ?? 4040;
-const server: Server = app.listen(4040, () =>
+const server: Server = app.listen(PORT, () =>
   console.log(`server is on port ${PORT}`)
 );

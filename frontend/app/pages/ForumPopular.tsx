@@ -17,7 +17,7 @@ export default function forumPopular() {
     const fetchRecentCommunities = async () => {
       try {
         const res = await authenticatedFetch(
-          "http://localhost:4040/api/community",
+          "/api/community",
           localStorage.getItem("token")
         );
   

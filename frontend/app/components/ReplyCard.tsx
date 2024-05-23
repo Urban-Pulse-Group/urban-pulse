@@ -60,7 +60,7 @@ export default function ReplyCard({ reply }: { reply: Reply }) {
     }
 
     const res = await authenticatedFetch(
-      `http://localhost:4040/api/thread/${reply.id}/likes`,
+      `/api/thread/${reply.id}/likes`,
       localStorage.getItem("token"),
       {
         method: "PUT",

@@ -16,7 +16,7 @@ export default function HomePage() {
   const fetchRecentCommunities = async () => {
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/community",
+        "/api/community",
         localStorage.getItem("token")
       );
 
@@ -30,7 +30,7 @@ export default function HomePage() {
   const getRandomPosts = async () => {
     try {
       const res = await authenticatedFetch(
-        `http://localhost:4040/api/post/random/10`,
+        `/api/post/random/10`,
         localStorage.getItem("token")
       );
       const data = await res.json();

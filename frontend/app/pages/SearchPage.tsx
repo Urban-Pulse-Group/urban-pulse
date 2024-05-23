@@ -17,7 +17,7 @@ export default function SearchPage() {
   const fetchRecentCommunities = async () => {
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/community",
+        "/api/community",
         localStorage.getItem("token")
       );
       const data = await res.json();
@@ -32,7 +32,7 @@ export default function SearchPage() {
     console.log("Fetching search results for query:", query);
     try {
       const res = await authenticatedFetch(
-        `http://localhost:4040/api/search/searchPosts?query=${query}`,
+        `/api/search/searchPosts?query=${query}`,
         localStorage.getItem("token")
       );
       const data = await res.json();

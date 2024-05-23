@@ -16,7 +16,7 @@ export default function CommunityPage() {
 
   const getMembershipCount = async (communityId: string) => {
     try {
-      const response = await authenticatedFetch(`http://localhost:4040/api/membership/count/${communityId}`, localStorage.getItem("token"));
+      const response = await authenticatedFetch(`/api/membership/count/${communityId}`, localStorage.getItem("token"));
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -33,7 +33,7 @@ export default function CommunityPage() {
     const getCommunity = async () => {
       try {
         const res = await authenticatedFetch(
-          `http://localhost:4040/api/community/${slugs}`,
+          `/api/community/${slugs}`,
           localStorage.getItem("token")
         );
         const data = await res.json();
@@ -51,7 +51,7 @@ export default function CommunityPage() {
     const checkMembership = async () => {
       try {
         const isMemberRes = await authenticatedFetch(
-          `http://localhost:4040/api/membership/isMember?userId=${user.id}&communityId=${community.id}`,
+          `/api/membership/isMember?userId=${user.id}&communityId=${community.id}`,
           localStorage.getItem("token")
         );
         const isMemberData = await isMemberRes.json();
@@ -69,7 +69,7 @@ export default function CommunityPage() {
     const fetchPosts = async () => {
       try {
         const res = await authenticatedFetch(
-          `http://localhost:4040/api/post/${community.id}`,
+          `/api/post/${community.id}`,
           localStorage.getItem("token")
         );
 
@@ -86,7 +86,7 @@ export default function CommunityPage() {
   const joinCommunity = async () => {
     try {
       await authenticatedFetch(
-        `http://localhost:4040/api/membership/join`,
+        `/api/membership/join`,
         localStorage.getItem("token"),
         {
           method: "POST",
@@ -96,6 +96,7 @@ export default function CommunityPage() {
           }),
         }
       );
+    
       setIsMember(true);
       setJoinedCommunities([...joinedCommunities, community!]);
     } catch (err) {
@@ -106,7 +107,7 @@ export default function CommunityPage() {
   const leaveCommunity = async () => {
     try {
       await authenticatedFetch(
-        `http://localhost:4040/api/membership/leave`,
+        `/api/membership/leave`,
         localStorage.getItem("token"),
         {
           method: "POST",

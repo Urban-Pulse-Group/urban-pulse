@@ -74,7 +74,7 @@ export default function PostForm() {
     const getCommunity = async () => {
       try {
         const res = await authenticatedFetch(
-          `http://localhost:4040/api/community/${slugs}`,
+          `/api/community/${slugs}`,
           localStorage.getItem("token")
         );
         const data = await res.json();
@@ -139,7 +139,7 @@ export default function PostForm() {
     const url = await uploadImage();
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/post",
+        "/api/post",
         localStorage.getItem("token"),
         {
           method: "post",

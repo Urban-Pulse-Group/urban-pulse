@@ -6,7 +6,7 @@ export default function HomeLayout() {
     return (
         <div>
             <NavBar />
-            <main>
+            <main className="">
                 <Outlet />
             </main>
         </div>

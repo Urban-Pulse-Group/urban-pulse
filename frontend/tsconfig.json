@@ -14,7 +14,7 @@
       "react-dom",
       "leaflet",
       "leaflet.markercluster",
-      "@types/react-leaflet",
+      "react-leaflet",
       "leaflet-control-geocoder"
     ],
 

@@ -4,7 +4,10 @@ import LMap from "../components/LeafletMap"
 type Props = {}
 const Map = () => {
   return (
-    <LMap />
+    <div className='h-[50vh]'>
+       <LMap />
+    </div>
+   
   )
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { ArrowLeft } from 'lucide-react';
 const ReturnHomeButton: React.FC = () => {
     const navigate = useNavigate();
   
@@ -9,7 +9,7 @@ const ReturnHomeButton: React.FC = () => {
     };
   
     return (
-      <button onClick={handleClick}>Return to Home</button>
+      <ArrowLeft onClick={handleClick}>Return to Home</ArrowLeft>
     );
   };
   

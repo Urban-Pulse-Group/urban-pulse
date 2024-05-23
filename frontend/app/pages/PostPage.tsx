@@ -27,7 +27,7 @@ export interface Comment {
   slugs: string;
   user_username?: string;
   likes?: number;
-  user_img: string
+  user_img: string;
 }
 
 export default function PostPage() {
@@ -41,49 +41,51 @@ export default function PostPage() {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
   const location = useLocation();
+  const { user, setJoinedCommunities, joinedCommunities } = useAuth();
+  const [members, setMembers] = useState<number>(0);
+  const [isMember, setIsMember] = useState(false);
 
-  const { user } = useAuth();
   const slugs = location.pathname.split("/")[3];
 
   const getCommunity = async () => {
     try {
       const res = await authenticatedFetch(
-        `http://localhost:4040/api/community/${slugs}`,
+        `/api/community/${slugs}`,
         localStorage.getItem("token")
       );
       const data = await res.json();
-      console.log(data);
       setCommunity(data.data);
     } catch (err) {
       console.log(err);
     }
   };
-  const sortedComments = (comments) => [...comments].sort((a: Comment, b: Comment) =>
-    new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
-  );
 
+  const sortedComments = (comments) =>
+    [...comments].sort(
+      (a: Comment, b: Comment) =>
+        new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+    );
 
   const getComments = async () => {
     try {
       const res = await authenticatedFetch(
-        `http://localhost:4040/api/thread/${post?.id}`,
+        `/api/thread/${post?.id}`,
         localStorage.getItem("token"),
         {
           method: "GET",
         }
       );
       const data = await res.json();
-      console.log(data);
       setComments(sortedComments(data.data));
     } catch (err) {
       console.log(err);
     }
   };
-  console.log("comments;", comments)
+
   const fetchPost = async () => {
     try {
       const res = await authenticatedFetch(
-        `http://localhost:4040/api/post/byId/${id}`,
+        `/api/post/byId/${id}`,
         localStorage.getItem("token")
       );
       const data = await res.json();
@@ -92,19 +94,103 @@ export default function PostPage() {
       console.log(err);
     }
   };
-  useEffect(() => {
 
-      getCommunity();
-       fetchPost();
-   
-    
+  useEffect(() => {
+    getCommunity();
+    fetchPost();
   }, [id]);
+
   useEffect(() => {
     if (!post) {
       return;
     }
     getComments();
   }, [post]);
+
+  useEffect(() => {
+    if (!community || !user) return;
+
+    const checkMembership = async () => {
+      try {
+        const isMemberRes = await authenticatedFetch(
+          `/api/membership/isMember?userId=${user.id}&communityId=${community.id}`,
+          localStorage.getItem("token")
+        );
+        const isMemberData = await isMemberRes.json();
+        setIsMember(isMemberData.isMember);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    checkMembership();
+  }, [community, user]);
+
+  useEffect(() => {
+    if (!community) return;
+
+    const getMembershipCount = async (communityId: string) => {
+      try {
+        const response = await authenticatedFetch(
+          `/api/membership/count/${communityId}`,
+          localStorage.getItem("token")
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setMembers(data.data);
+      } catch (error) {
+        console.error("Error fetching membership count:", error);
+        throw error;
+      }
+    };
+    getMembershipCount(community.id!);
+  }, [community]);
+
+  const joinCommunity = async () => {
+    try {
+      await authenticatedFetch(
+        `/api/membership/join`,
+        localStorage.getItem("token"),
+        {
+          method: "POST",
+          body: JSON.stringify({
+            userId: user?.id,
+            communityId: community?.id,
+          }),
+        }
+      );
+
+      setIsMember(true);
+      setJoinedCommunities([...joinedCommunities, community!]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const leaveCommunity = async () => {
+    try {
+      await authenticatedFetch(
+        `/api/membership/leave`,
+        localStorage.getItem("token"),
+        {
+          method: "POST",
+          body: JSON.stringify({
+            userId: user?.id,
+            communityId: community?.id,
+          }),
+        }
+      );
+      setIsMember(false);
+      setJoinedCommunities(
+        joinedCommunities.filter((hood) => {
+          return hood.id != community?.id;
+        })
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const sanitizedContent = DOMPurify.sanitize(post?.content ?? "");
 
@@ -145,7 +231,7 @@ export default function PostPage() {
       : originalVote - 1;
 
     const res = await authenticatedFetch(
-      `http://localhost:4040/api/post/${post?.id}/likes`,
+      `/api/post/${post?.id}/likes`,
       localStorage.getItem("token"),
       {
         method: "PUT",
@@ -211,7 +297,7 @@ export default function PostPage() {
   const handleSubmitComment = async () => {
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/thread",
+        "/api/thread",
         localStorage.getItem("token"),
         {
           method: "POST",
@@ -235,7 +321,6 @@ export default function PostPage() {
       {" "}
       <div
         className={`flex  lg:px-10 justify-center 
-
     md:mx-auto  flex-col  `}>
         <div className="">
           <div className="flex flex-col md:flex-row justify-between  w-full flex-wrap ">
@@ -245,7 +330,6 @@ export default function PostPage() {
         <div className="flex  ">
           <div
             className=" flex overflow-y-scroll no-scrollbar  lg:px-10 
-
     md:mx-auto  flex-col    :w-[80vw] lg:w-[25rem] xl:w-[40rem] 2xl:w-[50rem] p-5">
             <div className="flex items-center justify-center  ">
               <div className="">
@@ -340,9 +424,19 @@ export default function PostPage() {
             <div className="border-b w-full flex flex-col items-center p-5">
               <div className="flex border-b pb-3 items-center justify-between mb-5 w-full">
                 <h2 className="font-bold text-xl">{community?.title}</h2>
-                <button className="rounded-3xl border px-3 py-2 text-xs hover:border-primary bg-primary hover:bg-primary text-white ">
-                  Join
-                </button>
+                {isMember ? (
+                  <button
+                    onClick={leaveCommunity}
+                    className="rounded-3xl border px-3 py-2 text-xs hover:border-primary bg-primary hover:bg-primary text-white ">
+                    Leave
+                  </button>
+                ) : (
+                  <button
+                    onClick={joinCommunity}
+                    className="rounded-3xl border px-3 py-2 text-xs hover:border-primary bg-primary hover:bg-primary text-white ">
+                    Join
+                  </button>
+                )}
               </div>
 
               <h2 className="font-bold">The {community?.title} community</h2>
@@ -351,14 +445,7 @@ export default function PostPage() {
             </div>
 
             <div className="flex mt-5  justify-center gap-5">
-              <div className="flex flex-col items-center ">
-                <p>35</p>
-                <p className="text-gray-500 text-sm">members</p>
-              </div>
-              <div className="flex flex-col items-center ">
-                <p>12</p>
-                <p className="text-gray-500 text-sm">posts</p>
-              </div>
+        
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { Label } from "../components/label";
@@ -91,7 +92,7 @@ console.log(formData)
         img: url,
       };
 
-      const res = await fetch("http://localhost:4040/api/auth/register", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +133,10 @@ console.log(formData)
   };
 
   return (
-    <div className="w-screen justify-center flex items-center h-screen overflow-scroll sm:overflow-hidden lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="w-screen justify-center flex items-center h-screen  sm:pt-0 overflow-scroll sm:overflow-hidden lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+       <div className="absolute left-5 top-5 ">
+            <ReturnHomeButton />
+          </div>
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto mt-10 sm:mt-0 grid w-[350px] gap-6">
           <form onSubmit={handleSubmit} className="grid gap-6">
@@ -231,9 +235,7 @@ console.log(formData)
               </Link>
             </div>
           </form>
-          <div className="mt-4 text-center">
-            <ReturnHomeButton />
-          </div>
+         
         </div>
       </div>
       <div className="hidden lg:h-screen bg-muted lg:flex items-center">
