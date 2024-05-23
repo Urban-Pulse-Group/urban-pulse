@@ -43,6 +43,6 @@ app.get('*', (req, res) => {
 });
 
 const PORT: number | string = process.env.PORT ?? 4040;
-const server: Server = app.listen(4040, () =>
+const server: Server = app.listen(PORT, () =>
   console.log(`server is on port ${PORT}`)
 );
