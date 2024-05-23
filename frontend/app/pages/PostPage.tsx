@@ -445,14 +445,7 @@ export default function PostPage() {
             </div>
 
             <div className="flex mt-5  justify-center gap-5">
-              <div className="flex flex-col items-center ">
-                <p>{members}</p>
-                <p className="text-gray-500 text-sm">members</p>
-              </div>
-              <div className="flex flex-col items-center ">
-                <p>{comments.length}</p>
-                <p className="text-gray-500 text-sm">posts</p>
-              </div>
+        
             </div>
           </div>
         </div>

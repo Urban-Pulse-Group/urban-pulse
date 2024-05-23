@@ -11,7 +11,7 @@ export default function ForumLayout() {
     if (!user) {
      navigate("/login")
    }
- }, [user])
+ }, [user, loadingUser])
   return (
     <div>
       <Sidebar>

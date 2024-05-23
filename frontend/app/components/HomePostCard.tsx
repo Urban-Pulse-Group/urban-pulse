@@ -195,7 +195,7 @@ export default function HomePostCard({
           <Link to={`/forum/communities/${post.community_slugs}/${post.id}`}>
             <MessageSquare className="w-4 h-4" />
           </Link>
-          100
+          0
         </div>
 
         <div className="bg-slate-100 hover:bg-slate-200 text-sm flex items-center gap-1 w-fit p-2 px-4 rounded-full">

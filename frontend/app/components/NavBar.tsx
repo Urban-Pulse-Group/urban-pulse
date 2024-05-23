@@ -41,7 +41,7 @@ export default function NavBar() {
   };
 
   return (
-    <div className="sticky z-[10000]">
+    <div className="sticky  z-[10000]">
       <nav className="  flex border-b px-10 lg:px-0 items-center justify-between">
         <Link to="/" className="ml-[-2.5rem] lg:ml-[-.9rem]">
           <Logo className="" />

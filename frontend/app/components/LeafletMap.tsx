@@ -41,26 +41,26 @@ const LeafletMap: React.FC = () => {
     null
   );
   const [censusData, setCensusData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserLocation([latitude, longitude]);
-          setLoading(false);
-        },
-        (error) => {
-          console.error("Error getting user location:", error);
-          setLoading(false);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-      setLoading(false);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if ("geolocation" in navigator) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         const { latitude, longitude } = position.coords;
+  //         setUserLocation([40.7128, 74.0060]);
+  //         setLoading(false);
+  //       },
+  //       (error) => {
+  //         console.error("Error getting user location:", error);
+  //         setLoading(false);
+  //       }
+  //     );
+  //   } else {
+  //     console.error("Geolocation is not supported by this browser.");
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   const handleCensusDataReceived = (data: any) => {
     setCensusData(data);
@@ -402,7 +402,7 @@ const LeafletMap: React.FC = () => {
           {/* Map Container */}
           <div className="w-3/4">
             <MapContainer
-              center={userLocation ?? [51.505, -0.09]}
+              center={userLocation ?? [40.7128, -73.935242]}
               zoom={13}
               style={{ height: "100vh" }}
             >
