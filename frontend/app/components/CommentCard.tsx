@@ -30,7 +30,7 @@ console.log(comment)
     const fetchReplies = async () => {
       try {
         const res = await authenticatedFetch(
-          `http://localhost:4040/api/reply/${comment.id}`,
+          `/api/reply/${comment.id}`,
           localStorage.getItem("token"), {
             method: "GET"
           }
@@ -84,7 +84,7 @@ console.log(comment)
     }
 
     const res = await authenticatedFetch(
-      `http://localhost:4040/api/thread/${comment.id}/likes`,
+      `/api/thread/${comment.id}/likes`,
       localStorage.getItem("token"),
       {
         method: "PUT",
@@ -165,7 +165,7 @@ console.log(comment)
   const handleSubmitReply = async () => {
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/reply",
+        "/api/reply",
         localStorage.getItem("token"),
         {
           method: "POST",

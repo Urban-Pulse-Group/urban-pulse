@@ -63,7 +63,7 @@ export default function HomePostCard({
     }
 
     const res = await authenticatedFetch(
-      `http://localhost:4040/api/post/${post.id}/likes`,
+      `/api/post/${post.id}/likes`,
       localStorage.getItem("token"),
       {
         method: "PUT",

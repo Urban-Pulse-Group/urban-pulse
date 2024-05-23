@@ -50,7 +50,7 @@ export default function PostPage() {
   const getCommunity = async () => {
     try {
       const res = await authenticatedFetch(
-        `http://localhost:4040/api/community/${slugs}`,
+        `/api/community/${slugs}`,
         localStorage.getItem("token")
       );
       const data = await res.json();
@@ -69,7 +69,7 @@ export default function PostPage() {
   const getComments = async () => {
     try {
       const res = await authenticatedFetch(
-        `http://localhost:4040/api/thread/${post?.id}`,
+        `/api/thread/${post?.id}`,
         localStorage.getItem("token"),
         {
           method: "GET",
@@ -85,7 +85,7 @@ export default function PostPage() {
   const fetchPost = async () => {
     try {
       const res = await authenticatedFetch(
-        `http://localhost:4040/api/post/byId/${id}`,
+        `/api/post/byId/${id}`,
         localStorage.getItem("token")
       );
       const data = await res.json();
@@ -113,7 +113,7 @@ export default function PostPage() {
     const checkMembership = async () => {
       try {
         const isMemberRes = await authenticatedFetch(
-          `http://localhost:4040/api/membership/isMember?userId=${user.id}&communityId=${community.id}`,
+          `/api/membership/isMember?userId=${user.id}&communityId=${community.id}`,
           localStorage.getItem("token")
         );
         const isMemberData = await isMemberRes.json();
@@ -131,7 +131,7 @@ export default function PostPage() {
     const getMembershipCount = async (communityId: string) => {
       try {
         const response = await authenticatedFetch(
-          `http://localhost:4040/api/membership/count/${communityId}`,
+          `/api/membership/count/${communityId}`,
           localStorage.getItem("token")
         );
         if (!response.ok) {
@@ -150,7 +150,7 @@ export default function PostPage() {
   const joinCommunity = async () => {
     try {
       await authenticatedFetch(
-        `http://localhost:4040/api/membership/join`,
+        `/api/membership/join`,
         localStorage.getItem("token"),
         {
           method: "POST",
@@ -171,7 +171,7 @@ export default function PostPage() {
   const leaveCommunity = async () => {
     try {
       await authenticatedFetch(
-        `http://localhost:4040/api/membership/leave`,
+        `/api/membership/leave`,
         localStorage.getItem("token"),
         {
           method: "POST",
@@ -231,7 +231,7 @@ export default function PostPage() {
       : originalVote - 1;
 
     const res = await authenticatedFetch(
-      `http://localhost:4040/api/post/${post?.id}/likes`,
+      `/api/post/${post?.id}/likes`,
       localStorage.getItem("token"),
       {
         method: "PUT",
@@ -297,7 +297,7 @@ export default function PostPage() {
   const handleSubmitComment = async () => {
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/thread",
+        "/api/thread",
         localStorage.getItem("token"),
         {
           method: "POST",

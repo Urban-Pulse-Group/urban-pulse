@@ -124,7 +124,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
     const url = await uploadImage();
     try {
       const res = await authenticatedFetch(
-        "http://localhost:4040/api/community",
+        "/api/community",
         token,
         {
           method: "POST",

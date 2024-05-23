@@ -27,7 +27,7 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:4040/api/auth/login", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

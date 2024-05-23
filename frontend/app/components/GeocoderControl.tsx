@@ -82,7 +82,7 @@ const GeocoderControlComponent: React.FC<GeocoderControlProps> = ({
           // Make API call to fetch Census data based on the matched place and state
           try {
             const censusResponse = await fetch(
-              `http://localhost:4040/api/census/census-data?state=${stateCode}&place=${placeCode}`
+              `/api/census/census-data?state=${stateCode}&place=${placeCode}`
             );
             if (!censusResponse.ok) {
               throw new Error("Failed to fetch data from backend");
